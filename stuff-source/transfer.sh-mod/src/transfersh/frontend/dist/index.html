@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"><![endif]--><!--[if IE 7]><html class="no-js lt-ie9 lt-ie8" lang="en"><![endif]--><!--[if IE 8]><html class="no-js lt-ie9" lang="en"><![endif]--><!--[if gt IE 8]><!--><html class="no-js" lang="en"><!--<![endif]-->
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Easy and fast file sharing from the command-line.">
+    <title>Transfer.sh &ndash; easy and fast file sharing from the command-line</title>
+    <link rel="shortcut icon" href="/img/favicon.ico" />
+    <link rel="stylesheet" href="/css/application.min.css">
+    <script src="/js/vendor/jquery-3.2.1.min.js"></script>
+    <script src="/js/vendor/modernizr.min.js"></script>
+  </head>
+  <body>
+    <section id="home">
+      <div class="wrapper">
+        <h2 class="page-title">Transfer.sh &ndash; easy file sharing from the command line</h2>
+        <div class="row animated fadeInDown">
+          <div id="from-terminal" class="box col-md-10 col-md-offset-1 col-xs-12">
+            <div class="terminal-top"></div>
+            <div id="terminal" class="terminal">
+              <code>
+              <span class="code-title">
+              You can upload file with cURL, HTTPie, wget or PowerShell.
+              </span>
+              <br>$ curl --upload-file ./hello.txt {{.SiteURL}}
+              <br>$ http -vv --form {{.SiteURL}} file@./hello.txt
+              <br>$ wget --method PUT --body-file=./hello.txt {{.SiteURL}} -O - -nv
+              <br>PS H:\&gt; invoke-webrequest -method put -infile .\hello.txt {{.SiteURL}}hello.txt
+              <br>
+              <br>
+              <span class="code-title">When the upload is complete, you will receive a link.</span>
+              <br>{{.SiteURL}}66nb8/hello.txt
+              <br>
+              <br>
+              <span class="code-title">
+              By default files are stored for 14 days and amount of downloads is unlimited.<br>
+              You can override this with the following HTTP headers:<br>
+              * Max-Days &ndash; to set maximum of days for storing file<br>
+              * Max-Downloads &ndash; to set maximum of downloads
+              </span>
+              <br>$ curl -H "Max-Downloads: 1" -H "Max-Days: 5" --upload-file ./hello.txt {{.SiteURL}}
+              <br>
+              <br>
+              <span class="code-title">You can upload multiple files at once.</span>
+              <br>$ curl -i -F filedata=@./1.txt -F filedata=@./2.txt {{.SiteURL}}
+              <br>
+              <br>
+              <span class="code-title">Combine downloads as tar.gz or zip.</span>
+              <br>$ curl '{{.SiteURL}}(15HKz/1.txt,15HKz/2.txt).tar.gz'
+              <br>$ curl '{{.SiteURL}}(15HKz/1.txt,15HKz/2.txt).zip'
+              <br>
+              <br>
+              <span class="code-title">Encrypt file with GnuPG and pass it to curl via pipe.</span>
+              <br>$ cat hello.txt | gpg -ac -o- | curl --upload-file - {{.SiteURL}}hello.gpg
+              <br>
+              <br>
+              <span class="code-title">Download and decrypt GnuPG encrypted file.</span>
+              <br>$ curl {{.SiteURL}}1lDau/hello.gpg | gpg -o- > ./hello.txt
+              </code>
+            </div>
+            <div id="web">
+              <code>
+              <br>
+              <span class="code-title">Upload from web browser.</span>
+              <br>Drag your files here, or <a class="browse" href="#">click to browse</a>.<br>
+              </code>
+              <input type="file" multiple="multiple" style='display: none;' />
+              <ul class='queue'>
+                <li></li>
+              </ul>
+              <div class='all-files'>
+                <br>
+                <div>
+                  <span class="code-title">Download all your files:</span>
+                  <br><br>
+                  <a class="download-zip btn-cta" href="#">zip</a> <a class="download-tar btn-cta" href="#">tar.gz</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <script src="/js/application.min.js"></script>
+  </body>
+</html>

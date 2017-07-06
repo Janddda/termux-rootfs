@@ -1,0 +1,62 @@
+
+TRANSFER.SH - EASY FILE SHARING FROM THE COMMAND LINE
+
+=====================================================
+=                  UPLOADING FILES                  =
+=====================================================
+
+# cURL
+$ curl --upload-file ./hello.txt {{.SiteURL}}
+
+# HTTPie
+$ http -vv --form {{.SiteURL}} file@./hello.txt
+
+# Wget
+$ wget --method PUT --body-file=./hello.txt {{.SiteURL}} -O - -nv
+
+# Windows PowerShell
+PS H:\> invoke-webrequest -method put -infile .\hello.txt {{.SiteURL}}hello.txt
+
+For each uploaded file you will receive a link.
+Example link to hello.txt: {{.SiteURL}}66nb8/hello.txt
+
+
+=====================================================
+=            WORKING WITH MULTIPLE FILES            =
+=====================================================
+
+You can upload or download multiple files at once.
+
+# Upload
+$ curl -i -F filedata=@./1.txt -F filedata=@./2.txt {{.SiteURL}}
+
+# Download files as tar.gz or zip archive
+$ curl '{{.SiteURL}}(15HKz/1.txt,Vkngk/2.txt).tar.gz'
+$ curl '{{.SiteURL}}(15HKz/1.txt,Vkngk/2.txt).zip'
+
+
+=====================================================
+=                      OPTIONS                      =
+=====================================================
+
+By default files are stored for 14 days and amount
+of downloads is unlimited. You can override this with
+the following HTTP headers:
+
+ * Max-Days – to set maximum of days for storing file
+ * Max-Downloads – to set maximum of downloads
+
+# Example
+$ curl -H "Max-Downloads: 1" -H "Max-Days: 5" --upload-file ./hello.txt {{.SiteURL}}
+
+
+=====================================================
+=                 ADVANCED COMMANDS                 =
+=====================================================
+
+Encrypt file with GnuPG and pass it to curl via pipe.
+$ cat hello.txt | gpg -ac -o- | curl --upload-file - {{.SiteURL}}hello.gpg 
+
+Download and decrypt GnuPG encrypted file.
+$ curl {{.SiteURL}}1lDau/hello.gpg | gpg -o- > ./hello.txt
+
