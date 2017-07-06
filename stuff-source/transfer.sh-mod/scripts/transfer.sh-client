@@ -1,0 +1,53 @@
+#!/bin/bash
+##
+##  Client for https://transfer.sh
+##
+
+if [ -z "${TRANSFERSH_HOST}" ]; then
+    if [ -z "${TRANSFERSH_URL}" ]; then
+        export TRANSFERSH_HOST="https://transfer.sh/"
+    fi
+fi
+
+if [ "${#}" != "0" ]; then
+    FILE="${1}"
+
+    if [ -e "${FILE}" ]; then
+        if [ -f "${FILE}" ]; then
+            FILENAME=$(basename "${FILE}")
+            echo
+            echo "Uploading '${FILENAME}' to ${TRANSFERSH_HOST}"
+            LINK=$(curl --progress-bar --upload-file "${FILE}" "${TRANSFERSH_HOST}")
+
+            if [ "$?" = "0" ]; then
+                echo
+                echo "Your link: ${LINK}"
+                exit 0
+            else
+                echo
+                echo "Failed to upload file."
+                exit 1
+            fi
+
+            echo
+            echo "Your link: ${LINK}"
+        else
+            echo "Error: '${FILE}' is not a regular file."
+            exit 1
+        fi
+    else
+        echo "Error: '${FILE}' not found."
+        exit 1
+    fi
+else
+    echo
+    echo "Usage: transfer [FILE]"
+    echo
+    echo "Client for transfer.sh cloud storage."
+    echo
+    echo "By default it uses original host 'https://transfer.sh/'."
+    echo "If you want to use your own server, set environment"
+    echo "variable 'TRANSFERSH_HOST'."
+    echo
+    exit 0
+fi
