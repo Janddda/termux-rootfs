@@ -9,7 +9,7 @@ __Warning:__ no apt or dpkg installed, everything is managed manually.
 * __Emulators:__ qemu-i386-static, qemu-x86_64-static, riscvemu
 * __Games:__ 2048, curseofwar, moon-buggy, nsnake, pacman
 * __Pentesting:__ aircrack-ng, reaver, mdk3, john, fcrackzip
-* __Servers:__ nginx, openssh, polipo, privoxy, tor
+* __Servers:__ nginx, openssh, polipo, privoxy, tor, transfer.sh
 * __Databases:__ mariadb, postgresql, redis, sqlite3
 * __VCS:__ mercurial, git
 * __[More](#available-software)__
@@ -183,7 +183,7 @@ __python 3 modules:__
 ```
 __servers:__
 ```
-  nginx, openssh, polipo, privoxy, tor
+  nginx, openssh, polipo, privoxy, tor, transfer.sh
 ```
 __special/custom:__
 ```
