@@ -3,8 +3,8 @@
 ##    Termux RootFS Installer
 ##
 
-VERSION="2.0"
-SHA256="c4ff81b2637f37e2a8ffc6d785ff3f49f0ebbbe9f754c9ac8058ab6830578ed2"
+VERSION="2.1"
+SHA256="483bd4b84f0475c72e5c3b8f75c9755610cceebc97b116795b0fbec798c0dae8"
 
 ###############################################################################
 ##
