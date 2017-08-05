@@ -1,0 +1,87 @@
+From a951dba4da828b67646a10ed2666aef7dcab2076 Mon Sep 17 00:00:00 2001
+From: Leonid Plyushch <leonid.plyushch@gmail.com>
+Date: Sat, 29 Jul 2017 18:48:04 +0300
+Subject: [PATCH] fix paths for Termux
+
+---
+ django/bin/django-admin.py                 | 2 +-
+ django/conf/__init__.py                    | 2 +-
+ django/conf/project_template/manage.py-tpl | 2 +-
+ django/contrib/admin/bin/compress.py       | 2 +-
+ scripts/manage_translations.py             | 2 +-
+ setup.py                                   | 4 ++--
+ 6 files changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/django/bin/django-admin.py b/django/bin/django-admin.py
+index f518cdc463..e7ede81e99 100755
+--- a/django/bin/django-admin.py
++++ b/django/bin/django-admin.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/data/data/com.termux/files/usr/bin/env python
+ from django.core import management
+ 
+ if __name__ == "__main__":
+diff --git a/django/conf/__init__.py b/django/conf/__init__.py
+index f99236a778..27448c9c12 100644
+--- a/django/conf/__init__.py
++++ b/django/conf/__init__.py
+@@ -131,7 +131,7 @@ class Settings(object):
+         if hasattr(time, 'tzset') and self.TIME_ZONE:
+             # When we can, attempt to validate the timezone. If we can't find
+             # this file, no check happens and it's harmless.
+-            zoneinfo_root = '/usr/share/zoneinfo'
++            zoneinfo_root = '/data/data/com.termux/files/usr/share/zoneinfo'
+             if (os.path.exists(zoneinfo_root) and not
+                     os.path.exists(os.path.join(zoneinfo_root, *(self.TIME_ZONE.split('/'))))):
+                 raise ValueError("Incorrect timezone setting: %s" % self.TIME_ZONE)
+diff --git a/django/conf/project_template/manage.py-tpl b/django/conf/project_template/manage.py-tpl
+index 41309844e0..1e04659ab5 100755
+--- a/django/conf/project_template/manage.py-tpl
++++ b/django/conf/project_template/manage.py-tpl
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/data/data/com.termux/files/usr/bin/env python
+ import os
+ import sys
+ 
+diff --git a/django/contrib/admin/bin/compress.py b/django/contrib/admin/bin/compress.py
+index dbef84d759..aceeca78fe 100644
+--- a/django/contrib/admin/bin/compress.py
++++ b/django/contrib/admin/bin/compress.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/data/data/com.termux/files/usr/bin/env python
+ import argparse
+ import os
+ import subprocess
+diff --git a/scripts/manage_translations.py b/scripts/manage_translations.py
+index 74534d47da..32bab748ef 100644
+--- a/scripts/manage_translations.py
++++ b/scripts/manage_translations.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/data/data/com.termux/files/usr/bin/env python
+ #
+ # This python file contains utility scripts to manage Django translations.
+ # It has to be run inside the django git root directory.
+diff --git a/setup.py b/setup.py
+index db7d079549..04acfe5e81 100644
+--- a/setup.py
++++ b/setup.py
+@@ -10,10 +10,10 @@ from setuptools import find_packages, setup
+ overlay_warning = False
+ if "install" in sys.argv:
+     lib_paths = [get_python_lib()]
+-    if lib_paths[0].startswith("/usr/lib/"):
++    if lib_paths[0].startswith("/data/data/com.termux/files/usr/lib/"):
+         # We have to try also with an explicit prefix of /usr/local in order to
+         # catch Debian's custom user site-packages directory.
+-        lib_paths.append(get_python_lib(prefix="/usr/local"))
++        lib_paths.append(get_python_lib(prefix="/data/data/com.termux/files/usr/local"))
+     for lib_path in lib_paths:
+         existing_path = os.path.abspath(os.path.join(lib_path, "django"))
+         if os.path.exists(existing_path):
+-- 
+2.13.3
+

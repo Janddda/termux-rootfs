@@ -1,0 +1,25 @@
+From 3bb245102d4a919dbb10af0894396146820f4dce Mon Sep 17 00:00:00 2001
+From: Leonid Plyushch <leonid.plyushch@gmail.com>
+Date: Sat, 29 Jul 2017 18:02:15 +0300
+Subject: [PATCH] fix paths for Termux
+
+---
+ pylama/hook.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/pylama/hook.py b/pylama/hook.py
+index 04f40ca..1306458 100644
+--- a/pylama/hook.py
++++ b/pylama/hook.py
+@@ -61,7 +61,7 @@ def install_git(path):
+     """Install hook in Git repository."""
+     hook = op.join(path, 'pre-commit')
+     with open(hook, 'w') as fd:
+-        fd.write("""#!/usr/bin/env python
++        fd.write("""#!/data/data/com.termux/files/usr/bin/env python
+ import sys
+ from pylama.hook import git_hook
+ 
+-- 
+2.13.3
+

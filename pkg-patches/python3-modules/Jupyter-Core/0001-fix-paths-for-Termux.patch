@@ -1,0 +1,60 @@
+From 0447c005067ebb930557d94252cb8d0a2d055a3c Mon Sep 17 00:00:00 2001
+From: Leonid Plyushch <leonid.plyushch@gmail.com>
+Date: Sat, 29 Jul 2017 18:41:16 +0300
+Subject: [PATCH] fix paths for Termux
+
+---
+ jupyter_core/paths.py   | 8 ++++----
+ scripts/jupyter         | 2 +-
+ scripts/jupyter-migrate | 2 +-
+ 3 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/jupyter_core/paths.py b/jupyter_core/paths.py
+index ad46e00..1441c34 100644
+--- a/jupyter_core/paths.py
++++ b/jupyter_core/paths.py
+@@ -118,8 +118,8 @@ if os.name == 'nt':
+         SYSTEM_JUPYTER_PATH = [os.path.join(sys.prefix, 'share', 'jupyter')]
+ else:
+     SYSTEM_JUPYTER_PATH = [
+-        "/usr/local/share/jupyter",
+-        "/usr/share/jupyter",
++        "/data/data/com.termux/files/usr/local/share/jupyter",
++        "/data/data/com.termux/files/usr/share/jupyter",
+     ]
+ 
+ ENV_JUPYTER_PATH = [os.path.join(sys.prefix, 'share', 'jupyter')]
+@@ -170,8 +170,8 @@ if os.name == 'nt':
+         SYSTEM_CONFIG_PATH = []
+ else:
+     SYSTEM_CONFIG_PATH = [
+-        "/usr/local/etc/jupyter",
+-        "/etc/jupyter",
++        "/data/data/com.termux/files/usr/local/etc/jupyter",
++        "/data/data/com.termux/files/usr/etc/jupyter",
+     ]
+ 
+ ENV_CONFIG_PATH = [os.path.join(sys.prefix, 'etc', 'jupyter')]
+diff --git a/scripts/jupyter b/scripts/jupyter
+index 04743e1..333624c 100755
+--- a/scripts/jupyter
++++ b/scripts/jupyter
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/data/data/com.termux/files/usr/bin/env python
+ """Launch the root jupyter command"""
+ 
+ from jupyter_core.command import main
+diff --git a/scripts/jupyter-migrate b/scripts/jupyter-migrate
+index 58548c6..66a333b 100755
+--- a/scripts/jupyter-migrate
++++ b/scripts/jupyter-migrate
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/data/data/com.termux/files/usr/bin/env python
+ """Migrate Jupyter config from IPython < 4.0"""
+ 
+ from jupyter_core.migrate import main
+-- 
+2.13.3
+

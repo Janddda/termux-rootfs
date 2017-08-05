@@ -1,0 +1,10 @@
+##
+##    This file provides version info for install.sh and upgrade.sh
+##
+
+ENABLE_INC_UPDATES="no"
+
+CURRENT_VERSION="3.0"
+PREVIOUS_VERSION="2.1"
+ARCHIVE_SHA256="11341e4b5dd33d03e50c18ae5f75775b7583acc854b8f5c9c681325f485e82bd"
+PATCH_SHA256=""

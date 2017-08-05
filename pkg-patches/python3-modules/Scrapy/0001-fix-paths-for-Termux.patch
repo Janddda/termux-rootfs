@@ -1,0 +1,26 @@
+From 5fb40bac0c73b8ca834a111b3352c12c4e2ea457 Mon Sep 17 00:00:00 2001
+From: Leonid Plyushch <leonid.plyushch@gmail.com>
+Date: Sat, 29 Jul 2017 17:24:54 +0300
+Subject: [PATCH] fix paths for Termux
+
+---
+ scrapy/utils/conf.py | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/scrapy/utils/conf.py b/scrapy/utils/conf.py
+index 435e9a6b..2b9f901e 100644
+--- a/scrapy/utils/conf.py
++++ b/scrapy/utils/conf.py
+@@ -102,8 +102,7 @@ def get_config(use_closest=True):
+ def get_sources(use_closest=True):
+     xdg_config_home = os.environ.get('XDG_CONFIG_HOME') or \
+         os.path.expanduser('~/.config')
+-    sources = ['/etc/scrapy.cfg', r'c:\scrapy\scrapy.cfg',
+-               xdg_config_home + '/scrapy.cfg',
++    sources = ['/data/data/com.termux/files/usr/etc/scrapy.cfg', xdg_config_home + '/scrapy.cfg',
+                os.path.expanduser('~/.scrapy.cfg')]
+     if use_closest:
+         sources.append(closest_scrapy_cfg())
+-- 
+2.13.3
+

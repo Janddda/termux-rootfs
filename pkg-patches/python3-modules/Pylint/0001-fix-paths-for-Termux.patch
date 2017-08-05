@@ -1,0 +1,67 @@
+From bd3a79a3c1c1e73f71ac64e6aab017bc800bf227 Mon Sep 17 00:00:00 2001
+From: Leonid Plyushch <leonid.plyushch@gmail.com>
+Date: Sat, 29 Jul 2017 17:59:10 +0300
+Subject: [PATCH] fix paths for Termux
+
+---
+ bin/epylint      | 2 +-
+ bin/pylint       | 2 +-
+ bin/pyreverse    | 2 +-
+ bin/symilar      | 2 +-
+ pylint/config.py | 4 ++--
+ 5 files changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/bin/epylint b/bin/epylint
+index 4aad6570..21341576 100755
+--- a/bin/epylint
++++ b/bin/epylint
+@@ -1,3 +1,3 @@
+-#!/usr/bin/env python
++#!/data/data/com.termux/files/usr/bin/env python
+ from pylint import epylint
+ epylint.Run()
+diff --git a/bin/pylint b/bin/pylint
+index e3e520f0..9d4f5ec4 100755
+--- a/bin/pylint
++++ b/bin/pylint
+@@ -1,3 +1,3 @@
+-#!/usr/bin/env python
++#!/data/data/com.termux/files/usr/bin/env python
+ from pylint import run_pylint
+ run_pylint()
+diff --git a/bin/pyreverse b/bin/pyreverse
+index 71269e76..08be8a5f 100755
+--- a/bin/pyreverse
++++ b/bin/pyreverse
+@@ -1,3 +1,3 @@
+-#!/usr/bin/env python
++#!/data/data/com.termux/files/usr/bin/env python
+ from pylint import run_pyreverse
+ run_pyreverse()
+diff --git a/bin/symilar b/bin/symilar
+index ef944624..65e7548a 100755
+--- a/bin/symilar
++++ b/bin/symilar
+@@ -1,3 +1,3 @@
+-#!/usr/bin/env python
++#!/data/data/com.termux/files/usr/bin/env python
+ from pylint import run_symilar
+ run_symilar()
+diff --git a/pylint/config.py b/pylint/config.py
+index 6922949f..50bdcea1 100644
+--- a/pylint/config.py
++++ b/pylint/config.py
+@@ -106,8 +106,8 @@ def find_pylintrc():
+             if not os.path.isfile(pylintrc):
+                 pylintrc = os.path.join(user_home, '.config', 'pylintrc')
+     if not os.path.isfile(pylintrc):
+-        if os.path.isfile('/etc/pylintrc'):
+-            pylintrc = '/etc/pylintrc'
++        if os.path.isfile('/data/data/com.termux/files/usr/etc/pylintrc'):
++            pylintrc = '/data/data/com.termux/files/usr/etc/pylintrc'
+         else:
+             pylintrc = None
+     return pylintrc
+-- 
+2.13.3
+

@@ -1,0 +1,110 @@
+From 848834f2cb36dbe52151dfc66624c21a6e5c48ef Mon Sep 17 00:00:00 2001
+From: Leonid Plyushch <leonid.plyushch@gmail.com>
+Date: Sat, 29 Jul 2017 18:52:40 +0300
+Subject: [PATCH] fix paths for Termux
+
+---
+ bin/cygdb         | 2 +-
+ bin/cython        | 2 +-
+ bin/cython_freeze | 2 +-
+ bin/cythonize     | 2 +-
+ bin/cythonrun     | 2 +-
+ bin/pcython       | 2 +-
+ cygdb.py          | 2 +-
+ cython.py         | 2 +-
+ cythonize.py      | 2 +-
+ 9 files changed, 9 insertions(+), 9 deletions(-)
+
+diff --git a/bin/cygdb b/bin/cygdb
+index 7f2d57f5d..fce4ee1d1 100755
+--- a/bin/cygdb
++++ b/bin/cygdb
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/data/data/com.termux/files/usr/bin/env python
+ 
+ import sys
+ 
+diff --git a/bin/cython b/bin/cython
+index 2acad0d0e..1d1169e16 100755
+--- a/bin/cython
++++ b/bin/cython
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/data/data/com.termux/files/usr/bin/env python
+ 
+ #
+ #   Cython -- Main Program, Unix
+diff --git a/bin/cython_freeze b/bin/cython_freeze
+index f22e07224..3f8264517 100755
+--- a/bin/cython_freeze
++++ b/bin/cython_freeze
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/data/data/com.termux/files/usr/bin/env python
+ """
+ Create a C file for embedding one or more Cython source files.
+ Requires Cython 0.11.2 (or perhaps newer).
+diff --git a/bin/cythonize b/bin/cythonize
+index 465f6ff54..16eea0b91 100755
+--- a/bin/cythonize
++++ b/bin/cythonize
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/data/data/com.termux/files/usr/bin/env python
+ 
+ #
+ # command line frontend for cythonize()
+diff --git a/bin/cythonrun b/bin/cythonrun
+index 1c6195492..109271a69 100755
+--- a/bin/cythonrun
++++ b/bin/cythonrun
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/data/data/com.termux/files/usr/bin/env python
+ 
+ """
+ Compile a Python script into an executable that embeds CPython and run it.
+diff --git a/bin/pcython b/bin/pcython
+index 0971c6a4c..9374a3b18 100755
+--- a/bin/pcython
++++ b/bin/pcython
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/data/data/com.termux/files/usr/bin/env python
+ 
+ """
+ Script to run Cython with a Python command line.
+diff --git a/cygdb.py b/cygdb.py
+index 7f2d57f5d..fce4ee1d1 100755
+--- a/cygdb.py
++++ b/cygdb.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/data/data/com.termux/files/usr/bin/env python
+ 
+ import sys
+ 
+diff --git a/cython.py b/cython.py
+index 9283c4d9e..2121f3034 100755
+--- a/cython.py
++++ b/cython.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/data/data/com.termux/files/usr/bin/env python
+ 
+ #
+ #   Cython -- Main Program, generic
+diff --git a/cythonize.py b/cythonize.py
+index 6b24dc736..471ce007a 100755
+--- a/cythonize.py
++++ b/cythonize.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/data/data/com.termux/files/usr/bin/env python
+ 
+ #
+ #   Cython -- enhanced main program
+-- 
+2.13.3
+

@@ -1,0 +1,168 @@
+From 7caf8f60214a8c064a59adc9ca0265b9eacc6b1b Mon Sep 17 00:00:00 2001
+From: Leonid Plyushch <leonid.plyushch@gmail.com>
+Date: Fri, 28 Jul 2017 18:03:12 +0300
+Subject: [PATCH] fix paths for Termux
+
+---
+ PIL/ImageFont.py               | 2 +-
+ Scripts/createfontdatachunk.py | 2 +-
+ Scripts/enhancer.py            | 2 +-
+ Scripts/explode.py             | 2 +-
+ Scripts/gifmaker.py            | 2 +-
+ Scripts/painter.py             | 2 +-
+ Scripts/pilconvert.py          | 2 +-
+ Scripts/pildriver.py           | 2 +-
+ Scripts/pilfile.py             | 2 +-
+ Scripts/pilfont.py             | 2 +-
+ Scripts/pilprint.py            | 2 +-
+ Scripts/player.py              | 2 +-
+ Scripts/thresholder.py         | 2 +-
+ Scripts/viewer.py              | 2 +-
+ 14 files changed, 14 insertions(+), 14 deletions(-)
+
+diff --git a/PIL/ImageFont.py b/PIL/ImageFont.py
+index 5b261171..ebba7da0 100644
+--- a/PIL/ImageFont.py
++++ b/PIL/ImageFont.py
+@@ -273,7 +273,7 @@ def truetype(font=None, size=10, index=0, encoding="",
+             if not lindirs:
+                 # According to the freedesktop spec, XDG_DATA_DIRS should
+                 # default to /usr/share
+-                lindirs = '/usr/share'
++                lindirs = '/data/data/com.termux/files/usr/share'
+             dirs += [os.path.join(lindir, "fonts")
+                      for lindir in lindirs.split(":")]
+         elif sys.platform == 'darwin':
+diff --git a/Scripts/createfontdatachunk.py b/Scripts/createfontdatachunk.py
+index 720fd006..49c79bf3 100755
+--- a/Scripts/createfontdatachunk.py
++++ b/Scripts/createfontdatachunk.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/data/data/com.termux/files/usr/bin/env python
+ from __future__ import print_function
+ import base64
+ import os
+diff --git a/Scripts/enhancer.py b/Scripts/enhancer.py
+index ee333974..f8a688ec 100755
+--- a/Scripts/enhancer.py
++++ b/Scripts/enhancer.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/data/data/com.termux/files/usr/bin/env python
+ #
+ # The Python Imaging Library
+ # $Id$
+diff --git a/Scripts/explode.py b/Scripts/explode.py
+index 53436100..68fd0dec 100755
+--- a/Scripts/explode.py
++++ b/Scripts/explode.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/data/data/com.termux/files/usr/bin/env python
+ #
+ # The Python Imaging Library
+ # $Id$
+diff --git a/Scripts/gifmaker.py b/Scripts/gifmaker.py
+index c0679ca7..9012bb7b 100755
+--- a/Scripts/gifmaker.py
++++ b/Scripts/gifmaker.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/data/data/com.termux/files/usr/bin/env python
+ #
+ # The Python Imaging Library
+ # $Id$
+diff --git a/Scripts/painter.py b/Scripts/painter.py
+index 30d55c2b..9ac50b60 100755
+--- a/Scripts/painter.py
++++ b/Scripts/painter.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/data/data/com.termux/files/usr/bin/env python
+ #
+ # The Python Imaging Library
+ # $Id$
+diff --git a/Scripts/pilconvert.py b/Scripts/pilconvert.py
+index b9ebd52a..2619c383 100755
+--- a/Scripts/pilconvert.py
++++ b/Scripts/pilconvert.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/data/data/com.termux/files/usr/bin/env python
+ #
+ # The Python Imaging Library.
+ # $Id$
+diff --git a/Scripts/pildriver.py b/Scripts/pildriver.py
+index cc425ad0..eab4efdd 100755
+--- a/Scripts/pildriver.py
++++ b/Scripts/pildriver.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/data/data/com.termux/files/usr/bin/env python
+ """PILdriver, an image-processing calculator using PIL.
+ 
+ An instance of class PILDriver is essentially a software stack machine
+diff --git a/Scripts/pilfile.py b/Scripts/pilfile.py
+index dab240e2..48673914 100755
+--- a/Scripts/pilfile.py
++++ b/Scripts/pilfile.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/data/data/com.termux/files/usr/bin/env python
+ #
+ # The Python Imaging Library.
+ # $Id$
+diff --git a/Scripts/pilfont.py b/Scripts/pilfont.py
+index aa6a3408..4f31fc89 100755
+--- a/Scripts/pilfont.py
++++ b/Scripts/pilfont.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/data/data/com.termux/files/usr/bin/env python
+ #
+ # The Python Imaging Library
+ # $Id$
+diff --git a/Scripts/pilprint.py b/Scripts/pilprint.py
+index 3d8d0175..f3473fb9 100755
+--- a/Scripts/pilprint.py
++++ b/Scripts/pilprint.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/data/data/com.termux/files/usr/bin/env python
+ #
+ # The Python Imaging Library.
+ # $Id$
+diff --git a/Scripts/player.py b/Scripts/player.py
+index dcf7d930..fbd63019 100755
+--- a/Scripts/player.py
++++ b/Scripts/player.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/data/data/com.termux/files/usr/bin/env python
+ #
+ # The Python Imaging Library
+ # $Id$
+diff --git a/Scripts/thresholder.py b/Scripts/thresholder.py
+index c6c62ff1..026f2105 100755
+--- a/Scripts/thresholder.py
++++ b/Scripts/thresholder.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/data/data/com.termux/files/usr/bin/env python
+ #
+ # The Python Imaging Library
+ # $Id$
+diff --git a/Scripts/viewer.py b/Scripts/viewer.py
+index c5b0b55c..5c058423 100755
+--- a/Scripts/viewer.py
++++ b/Scripts/viewer.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/data/data/com.termux/files/usr/bin/env python
+ #
+ # The Python Imaging Library
+ # $Id$
+-- 
+2.13.3
+

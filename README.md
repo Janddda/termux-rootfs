@@ -34,7 +34,7 @@ For optimal experience, you need to use the following modified Termux apps:
 * [Termux](https://github.com/xeffyr/termux-app) (Termux:Boot, Termux:Styling, Termux:Widget are integrated)
 * [Termux:API](https://github.com/xeffyr/termux-api)
 
-## Installation
+## How to install
 Please, __backup your home dir and current rootfs__ and __move to the safe place__ before installation of the termux-rootfs.
 
 __Installation:__
@@ -46,7 +46,16 @@ __Installation:__
 Then stop Termux app and reopen it. If shell working, probably installation was ok.
 If bad things happened, then use your backup (if you did it).
 
-### Password login protection
+## How to upgrade
+Incremental updates can be installed with command ```termux-upgrade-rootfs```. If the
+upgrading process fails, you can apply patch manually with command:
+```
+  $ termux-apply-patch PATCH_FILE.bin
+```
+File 'PATCH_FILE.bin' is a binary patch file that should be downloaded from the
+[releases page](https://github.com/xeffyr/termux-rootfs/releases).
+
+## Password login protection
 You can prevent using of termux by unwanted users by setting password with command '__passwd__' or '__termux-setup-rootfs__'.
 __If you want to use a such feature, you must use a [patched Termux app](https://github.com/xeffyr/termux-app) to prevent
 login bypassing with a 'failsafe' shell.__
@@ -61,7 +70,7 @@ __admin tools:__
 ```
 __android:__
 ```
-  adb, apk-utils, bootimg-tools, fastboot, resetprop, sparse-image-tools,
+  adb, apk-utils, bootimg-tools, fastboot, resetprop, sdat2img, sparse-image-tools,
   termux-api
 ```
 __archivers/compressors:__
@@ -115,8 +124,8 @@ __generic utilities:__
 ```
   ag, bash, busybox, coreutils, dash, diffutils, file, findutils, fzf, gawk,
   gettext, global, grep, inetutils, info, less, man, mktorrent, patch, procps,
-  rhash, remind, rsync, tree, tasksh, taskwarrior, timewarrior, units,
-  util-linux, xdelta3, zsh
+  rhash, rsync, tree, tasksh, taskwarrior, timewarrior, units, util-linux,
+  xdelta3, zsh
 ```
 __libraries:__
 ```
@@ -125,12 +134,12 @@ __libraries:__
   libandroid-shmem, libandroid-support, libcaca, libconfig, libconfuse,
   libclang, libcroco, libcrypt, libcurl, libedit, libevent, libffi,
   libgcrypt, libgd, libgit2, libidn, libisl, libjasper, libjpeg-turbo,
-  libmp3lame, libmpc, libmpfr, libnl, libnpth, libogg, libpcap, libpcre,
-  libpipeline, libpng, libpopt, libqrencode, librsync, libsodium, libssh,
-  libssh2, libtalloc, libtiff, libunistring, libutil, libuuid, libvorbis,
-  libx264, libx265, libxml2, libxslt, libzmq, libzopfli, ldns, leptonica,
-  littlecms, miniupnpc, ncurses, nettle, nghttp2, openblas, openjpeg,
-  openssl, opus, pango, poppler, readline, c-toxcore, zlib
+  libmp3lame, libmpc, libmpfr, libnet, libnl, libnpth, libogg, libpcap,
+  libpcre, libpipeline, libpng, libpopt, libqrencode, librsync, libsodium,
+  libssh, libssh2, libtalloc, libtiff, libunistring, libutil, libuuid,
+  libvorbis, libx264, libx265, libxml2, libxslt, libzmq, libzopfli, ldns,
+  leptonica, littlecms, miniupnpc, ncurses, nettle, nghttp2, openblas,
+  openjpeg, openssl, opus, pango, poppler, readline, c-toxcore, zlib
 ```
 __media:__
 ```
@@ -138,48 +147,41 @@ __media:__
 ```
 __misc:__
 ```
-  crunch, cmatrix, ent, kona, lolcat, mathomatic, pick, sc
+  crunch, cmatrix, ent, eschalot, kona, lolcat, mathomatic, pick, sc,
+  vanitygen-plus
 ```
 __networking:__
 ```
   aria2, cryptcat, curl, elinks, ftp, irssi, lftp, lynx, megatools, netcat,
-  socat, syncthing, tcpdump, telnet, torsocks, toxic, upnpc, wget, wput, zsync
+  socat, syncthing, tcpdump, telnet, torsocks, toxic, transmission, upnpc,
+  wget, wput, zsync
 ```
 __pentesting & cracking:__
 ```
-  aircrack-ng, fcrackzip, hydra, john, mdk3, pkcrack, reaver
+  aircrack-ng, bettercap, fcrackzip, hydra, john, mdk3, pkcrack, reaver
 ```
 __python 3 modules:__
 ```
-  appdirs, asn1crypto, astroid, asyncio-ipython-magic, attrs, Automat, autopep8,
-  bash-kernel, beautifulsoup4, bleach, certifi, cffi, cffi-magic, chardet, click,
-  configparser, constantly, coverage, cryptography, cssselect, cycler, Cython,
-  decorator, diff-match-patch, dismagic, dj-database-url, dj-static, Django,
-  django-bootstrap3, django-ckeditor, django-extensions, django-filebrowser,
-  django-filter, django-grappelli, django-guardian, django-import-export,
-  django-markdown, django-nose, django-orm-magic, django-pagedown,
-  django-profiler, django-pygments, django-redis, django-request-profiler,
-  django-taggit, django-toolbelt, django-webtest, django-wysiwyg-redactor,
-  djangorestframework, entrypoints, Flask, gevent, greenlet, guess-language-spirit,
-  gunicorn, html5lib, httpie, httplib2, hyperlink, idna, incremental, iotop,
-  ipdb, ipykernel, ipynose, ipyparallel, ipytest, ipython, ipython-autotime,
-  ipython-extensions, ipython-genutils, ipython-memwatcher, ipython-unittest,
-  ipywidgets, isort, itsdangerous, jedi, Jinja2, jsonschema, jupyter,
-  jupyter-c-kernel, jupyter-client, jupyter-console, jupyter-core,
-  jupyter-fortran-kernel, keyring, lazy-object-proxy, line-profiler, lxml, Markdown,
-  markdown2, MarkupSafe, matplotlib, mccabe, memory-profiler, mistune, mpmath,
-  nbconvert, nbextensions, nbformat, nose, notebook, numpy, numpy-display, olefile,
-  packaging, pandas, pandocfilters, parsel, path.py, pbr, pep257, pep8, pexpect,
-  pickleshare, Pillow, pip, prompt-toolkit, psutil, psycopg2, ptyprocess, pyasn1,
-  pyasn1-modules, PyBrain, pycodestyle, pycparser, PyDispatcher, pydocstyle,
-  pyflakes, Pygments, pylama, pylint, pylint-django, pylint-plugin-utils, PyMySQL,
-  pyOpenSSL, pyparsing, python-dateutil, pytz, pyzmq, qrcode, qtconsole, queuelib,
-  redis, redis-kernel, requests, rwt, scapy-python3, scikit-learn, scipy, Scrapy,
-  SecretStorage, service-identity, setuptools, sh, simplegeneric, six, SQLAlchemy,
-  static3, sympy, tablib, terminado, testpath, texttable, tornado, traitlets,
-  Twisted, Unidecode, urllib3, virtualenv, virtualenv-clone, w3lib, waitress,
-  wcwidth, webencodings, WebOb, WebTest, Werkzeug, wheel, widgetsnbextension,
-  wrapt, zope.interface
+  Automat, Cython, Django, Jinja2, Markdown, MarkupSafe, Pillow, PyBrain, PyDispatcher,
+  PyMySQL, PyYAML, Pygments, SQLAlchemy, Scrapy, Twisted, Unidecode, WebOb, WebTest,
+  Werkzeug, asn1crypto, astroid, attrs, autopep8, bash-kernel, beautifulsoup4, bleach,
+  certifi, cffi, chardet, click, constantly, coverage, cryptography, cssselect, cycler,
+  decorator, dismagic, dj-database-url, dj-static, django-bootstrap3, django-ckeditor,
+  django-js-asset, django-orm-magic, django-profiler-middleware, django-pygments,
+  djangorestframework, entrypoints, et-xmlfile, gevent, greenlet, guess-language-spirit,
+  gunicorn, html5lib, httpie, httplib2, hyperlink, idna, incremental, iotop, ipdb, ipykernel,
+  ipynose, ipyparallel, ipytest, ipython, ipython-genutils, ipywidgets, isort, jdcal, jedi,
+  jsonschema, jupyter, jupyter-c-kernel, jupyter-client, jupyter-console, jupyter-core,
+  jupyter-fortran-kernel, lazy-object-proxy, line-profiler, lxml, markdown2, matplotlib,
+  mccabe, memory-profiler, mistune, mpmath, nbconvert, nbextensions, nbformat, nose,
+  notebook, numpy, odfpy, olefile, openpyxl, pandas, pandocfilters, parsel, path.py, pbr,
+  pep257, pep8, pexpect, pickleshare, pip, prompt-toolkit, psutil, psycopg2, ptyprocess,
+  pyOpenSSL, pyasn1, pyasn1-modules, pycodestyle, pycparser, pydocstyle, pyflakes, pylama,
+  pylint, pyparsing, python-dateutil, pytz, pyzmq, qrcode, qtconsole, queuelib, redis,
+  redis-kernel, requests, scapy-python3, scikit-learn, scipy, service-identity, setuptools,
+  sh, simplegeneric, six, snowballstemmer, static3, sympy, tablib, terminado, testpath,
+  texttable, tornado, traitlets, unicodecsv, urllib3, virtualenv, virtualenv-clone, w3lib,
+  waitress, wcwidth, webencodings, wheel, widgetsnbextension, wrapt, xlrd, xlwt, zope.interface
 ```
 __servers:__
 ```
@@ -187,10 +189,11 @@ __servers:__
 ```
 __special/custom:__
 ```
-  create-android-app, buildapk, fake-chroot, login, linkchk, passwd,
-  runlinux, service-manager, wifi-dump, wifi-jam
+  create-android-app, batteryinfo, buildapk, fake-chroot, login, linkchk,
+  mount-sdext, myip, passwd, runlinux, secret-space-encryptor, service-manager,
+  sudo, umount-sdext, update-config-guess, wifi-dump, wifi-jam, wttr.in
 ```
 __vcs:__
 ```
-  mercurial, git, tig
+  git, mercurial, tig
 ```

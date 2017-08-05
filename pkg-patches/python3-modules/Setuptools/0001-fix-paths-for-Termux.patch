@@ -1,0 +1,64 @@
+From 1474d6766c7ba19664603d454e73eef4f4566c28 Mon Sep 17 00:00:00 2001
+From: Leonid Plyushch <leonid.plyushch@gmail.com>
+Date: Sat, 29 Jul 2017 19:01:41 +0300
+Subject: [PATCH] fix paths for Termux
+
+---
+ setuptools/command/bdist_egg.py    |  2 +-
+ setuptools/command/easy_install.py |  2 +-
+ setuptools/ssl_support.py          | 15 ++++++++-------
+ 3 files changed, 10 insertions(+), 9 deletions(-)
+
+diff --git a/setuptools/command/bdist_egg.py b/setuptools/command/bdist_egg.py
+index 8cd9dfef..16f92d64 100644
+--- a/setuptools/command/bdist_egg.py
++++ b/setuptools/command/bdist_egg.py
+@@ -263,7 +263,7 @@ class bdist_egg(Command):
+         basename = os.path.basename(self.egg_output)
+ 
+         header = (
+-            "#!/bin/sh\n"
++            "#!/data/data/com.termux/files/usr/bin/sh\n"
+             'if [ `basename $0` = "%(basename)s" ]\n'
+             'then exec python%(pyver)s -c "'
+             "import sys, os; sys.path.insert(0, os.path.abspath('$0')); "
+diff --git a/setuptools/command/easy_install.py b/setuptools/command/easy_install.py
+index 8fba7b41..58b98732 100755
+--- a/setuptools/command/easy_install.py
++++ b/setuptools/command/easy_install.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/data/data/com.termux/files/usr/bin/env python
+ """
+ Easy Install
+ ------------
+diff --git a/setuptools/ssl_support.py b/setuptools/ssl_support.py
+index 72b18ef2..deba4f1b 100644
+--- a/setuptools/ssl_support.py
++++ b/setuptools/ssl_support.py
+@@ -19,14 +19,15 @@ __all__ = [
+ ]
+ 
+ cert_paths = """
+-/etc/pki/tls/certs/ca-bundle.crt
+-/etc/ssl/certs/ca-certificates.crt
+-/usr/share/ssl/certs/ca-bundle.crt
+-/usr/local/share/certs/ca-root.crt
+-/etc/ssl/cert.pem
++/data/data/com.termux/files/usr/etc/pki/tls/certs/ca-bundle.crt
++/data/data/com.termux/files/usr/etc/ssl/certs/ca-certificates.crt
++/data/data/com.termux/files/usr/share/ssl/certs/ca-bundle.crt
++/data/data/com.termux/files/usr/local/share/certs/ca-root.crt
++/data/data/com.termux/files/usr/etc/ssl/cert.pem
+ /System/Library/OpenSSL/certs/cert.pem
+-/usr/local/share/certs/ca-root-nss.crt
+-/etc/ssl/ca-bundle.pem
++/data/data/com.termux/files/usr/local/share/certs/ca-root-nss.crt
++/data/data/com.termux/files/usr/etc/ssl/ca-bundle.pem
++/data/data/com.termux/files/usr/etc/tls/cert.pem
+ """.strip().split()
+ 
+ try:
+-- 
+2.13.3
+

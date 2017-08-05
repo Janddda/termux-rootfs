@@ -1,0 +1,94 @@
+From 8f1a04968a763f0d70d2c6c137fa6ea8774ab7d6 Mon Sep 17 00:00:00 2001
+From: Leonid Plyushch <leonid.plyushch@gmail.com>
+Date: Sat, 29 Jul 2017 18:59:54 +0300
+Subject: [PATCH] fix paths for Termux
+
+---
+ pip/_vendor/appdirs.py         | 4 ++--
+ pip/_vendor/distlib/scripts.py | 4 ++--
+ pip/_vendor/distro.py          | 2 +-
+ pip/utils/appdirs.py           | 4 ++--
+ 4 files changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/pip/_vendor/appdirs.py b/pip/_vendor/appdirs.py
+index 4b5c38bb..c9ae23ae 100644
+--- a/pip/_vendor/appdirs.py
++++ b/pip/_vendor/appdirs.py
+@@ -145,7 +145,7 @@ def site_data_dir(appname=None, appauthor=None, version=None, multipath=False):
+         # XDG default for $XDG_DATA_DIRS
+         # only first, if multipath is False
+         path = os.getenv('XDG_DATA_DIRS',
+-                         os.pathsep.join(['/usr/local/share', '/usr/share']))
++                         os.pathsep.join(['/data/data/com.termux/files/usr/local/share', '/data/data/com.termux/files/usr/share']))
+         pathlist = [os.path.expanduser(x.rstrip(os.sep)) for x in path.split(os.pathsep)]
+         if appname:
+             if version:
+@@ -240,7 +240,7 @@ def site_config_dir(appname=None, appauthor=None, version=None, multipath=False)
+     else:
+         # XDG default for $XDG_CONFIG_DIRS
+         # only first, if multipath is False
+-        path = os.getenv('XDG_CONFIG_DIRS', '/etc/xdg')
++        path = os.getenv('XDG_CONFIG_DIRS', '/data/data/com.termux/files/usr/etc/xdg')
+         pathlist = [os.path.expanduser(x.rstrip(os.sep)) for x in path.split(os.pathsep)]
+         if appname:
+             if version:
+diff --git a/pip/_vendor/distlib/scripts.py b/pip/_vendor/distlib/scripts.py
+index 792fc2e1..4b934953 100644
+--- a/pip/_vendor/distlib/scripts.py
++++ b/pip/_vendor/distlib/scripts.py
+@@ -69,7 +69,7 @@ def _enquote_executable(executable):
+         # for example /usr/bin/env "/dir with spaces/bin/jython"
+         # instead of "/usr/bin/env /dir with spaces/bin/jython"
+         # otherwise whole
+-        if executable.startswith('/usr/bin/env '):
++        if executable.startswith('/data/data/com.termux/files/usr/bin/env '):
+             env, _executable = executable.split(' ', 1)
+             if ' ' in _executable and not _executable.startswith('"'):
+                 executable = '%s "%s"' % (env, _executable)
+@@ -134,7 +134,7 @@ class ScriptMaker(object):
+             elif executable.lower().endswith('jython.exe'):
+                 # Use wrapper exe for Jython on Windows
+                 return executable
+-            return '/usr/bin/env %s' % executable
++            return '/data/data/com.termux/files/usr/bin/env %s' % executable
+ 
+     def _get_shebang(self, encoding, post_interp=b'', options=None):
+         enquote = True
+diff --git a/pip/_vendor/distro.py b/pip/_vendor/distro.py
+index 9e7daad2..09d69c21 100644
+--- a/pip/_vendor/distro.py
++++ b/pip/_vendor/distro.py
+@@ -40,7 +40,7 @@ import subprocess
+ if not sys.platform.startswith('linux'):
+     raise ImportError('Unsupported platform: {0}'.format(sys.platform))
+ 
+-_UNIXCONFDIR = '/etc'
++_UNIXCONFDIR = '/data/data/com.termux/files/usr/etc'
+ _OS_RELEASE_BASENAME = 'os-release'
+ 
+ #: Translation table for normalizing the "ID" attribute defined in os-release
+diff --git a/pip/utils/appdirs.py b/pip/utils/appdirs.py
+index 9b828014..15556168 100644
+--- a/pip/utils/appdirs.py
++++ b/pip/utils/appdirs.py
+@@ -159,7 +159,7 @@ def site_config_dirs(appname):
+         pathlist = [os.path.join('/Library/Application Support', appname)]
+     else:
+         # try looking in $XDG_CONFIG_DIRS
+-        xdg_config_dirs = os.getenv('XDG_CONFIG_DIRS', '/etc/xdg')
++        xdg_config_dirs = os.getenv('XDG_CONFIG_DIRS', '/data/data/com.termux/files/usr/etc/xdg')
+         if xdg_config_dirs:
+             pathlist = [
+                 os.path.join(expanduser(x), appname)
+@@ -169,7 +169,7 @@ def site_config_dirs(appname):
+             pathlist = []
+ 
+         # always look in /etc directly as well
+-        pathlist.append('/etc')
++        pathlist.append('/data/data/com.termux/files/usr/etc')
+ 
+     return pathlist
+ 
+-- 
+2.13.3
+

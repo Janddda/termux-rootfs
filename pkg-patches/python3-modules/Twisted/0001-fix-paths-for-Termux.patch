@@ -1,0 +1,161 @@
+From 212c67db77308f60eb7906b10815b692caaece67 Mon Sep 17 00:00:00 2001
+From: Leonid Plyushch <leonid.plyushch@gmail.com>
+Date: Sat, 29 Jul 2017 16:58:41 +0300
+Subject: [PATCH] fix paths for Termux
+
+---
+ src/twisted/conch/openssh_compat/factory.py | 4 ++--
+ src/twisted/conch/scripts/cftp.py           | 2 +-
+ src/twisted/conch/unix.py                   | 4 ++--
+ src/twisted/mail/scripts/mailmail.py        | 2 +-
+ src/twisted/names/authority.py              | 2 +-
+ src/twisted/names/client.py                 | 4 ++--
+ src/twisted/names/hosts.py                  | 2 +-
+ src/twisted/runner/inetdconf.py             | 4 ++--
+ src/twisted/web/twcgi.py                    | 2 +-
+ 9 files changed, 13 insertions(+), 13 deletions(-)
+
+diff --git a/src/twisted/conch/openssh_compat/factory.py b/src/twisted/conch/openssh_compat/factory.py
+index eeea82322..10ec2e9a0 100644
+--- a/src/twisted/conch/openssh_compat/factory.py
++++ b/src/twisted/conch/openssh_compat/factory.py
+@@ -18,9 +18,9 @@ from twisted.conch.openssh_compat import primes
+ 
+ 
+ class OpenSSHFactory(factory.SSHFactory):
+-    dataRoot = '/usr/local/etc'
++    dataRoot = '/data/data/com.termux/files/usr/etc'
+     # For openbsd which puts moduli in a different directory from keys.
+-    moduliRoot = '/usr/local/etc'
++    moduliRoot = '/data/data/com.termux/files/usr/etc'
+ 
+ 
+     def getPublicKeys(self):
+diff --git a/src/twisted/conch/scripts/cftp.py b/src/twisted/conch/scripts/cftp.py
+index f4bd38733..d718a875e 100644
+--- a/src/twisted/conch/scripts/cftp.py
++++ b/src/twisted/conch/scripts/cftp.py
+@@ -725,7 +725,7 @@ version                         Print the SFTP version.
+         """
+         shell = self._pwd.getpwnam(getpass.getuser())[6]
+         if not shell:
+-            shell = '/bin/sh'
++            shell = '/data/data/com.termux/files/usr/bin/sh'
+         if rest:
+             cmds = ['-c', rest]
+             return utils.getProcessOutput(shell, cmds, errortoo=1)
+diff --git a/src/twisted/conch/unix.py b/src/twisted/conch/unix.py
+index ec3d22c01..e7060fa1d 100644
+--- a/src/twisted/conch/unix.py
++++ b/src/twisted/conch/unix.py
+@@ -167,7 +167,7 @@ class SSHSessionForUnixConchUser:
+             from twisted.internet import reactor
+         self._reactor = reactor
+         self.avatar = avatar
+-        self.environ = {'PATH': '/bin:/usr/bin:/usr/local/bin'}
++        self.environ = {'PATH': '/data/data/com.termux/files/usr/bin:/system/xbin:/system/bin'}
+         self.pty = None
+         self.ptyTuple = 0
+ 
+@@ -241,7 +241,7 @@ class SSHSessionForUnixConchUser:
+     def execCommand(self, proto, cmd):
+         uid, gid = self.avatar.getUserGroupId()
+         homeDir = self.avatar.getHomeDir()
+-        shell = self.avatar.getShell() or '/bin/sh'
++        shell = self.avatar.getShell() or '/data/data/com.termux/files/usr/bin/sh'
+         self.environ['HOME'] = homeDir
+         command = (shell, '-c', cmd)
+         peer = self.avatar.conn.transport.transport.getPeer()
+diff --git a/src/twisted/mail/scripts/mailmail.py b/src/twisted/mail/scripts/mailmail.py
+index 83bb68417..e9a0071d7 100644
+--- a/src/twisted/mail/scripts/mailmail.py
++++ b/src/twisted/mail/scripts/mailmail.py
+@@ -23,7 +23,7 @@ from twisted.copyright import version
+ from twisted.internet import reactor
+ from twisted.mail import smtp
+ 
+-GLOBAL_CFG = "/etc/mailmail"
++GLOBAL_CFG = "/data/data/com.termux/files/usr/etc/mailmail"
+ LOCAL_CFG = os.path.expanduser("~/.twisted/mailmail")
+ SMARTHOST = '127.0.0.1'
+ 
+diff --git a/src/twisted/names/authority.py b/src/twisted/names/authority.py
+index 6e12ea8c6..644569142 100644
+--- a/src/twisted/names/authority.py
++++ b/src/twisted/names/authority.py
+@@ -19,7 +19,7 @@ from twisted.python.filepath import FilePath
+ 
+ 
+ 
+-def getSerial(filename='/tmp/twisted-names.serial'):
++def getSerial(filename='/data/data/com.termux/files/usr/tmp/twisted-names.serial'):
+     """
+     Return a monotonically increasing (across program runs) integer.
+ 
+diff --git a/src/twisted/names/client.py b/src/twisted/names/client.py
+index a2f4d873f..bba18e09f 100644
+--- a/src/twisted/names/client.py
++++ b/src/twisted/names/client.py
+@@ -573,9 +573,9 @@ def createResolver(servers=None, resolvconf=None, hosts=None):
+     """
+     if platform.getType() == 'posix':
+         if resolvconf is None:
+-            resolvconf = b'/etc/resolv.conf'
++            resolvconf = b'/data/data/com.termux/files/usr/etc/resolv.conf'
+         if hosts is None:
+-            hosts = b'/etc/hosts'
++            hosts = b'/data/data/com.termux/files/usr/etc/hosts'
+         theResolver = Resolver(resolvconf, servers)
+         hostResolver = hostsModule.Resolver(hosts)
+     else:
+diff --git a/src/twisted/names/hosts.py b/src/twisted/names/hosts.py
+index 9b29d551f..9f0c7a6e9 100644
+--- a/src/twisted/names/hosts.py
++++ b/src/twisted/names/hosts.py
+@@ -76,7 +76,7 @@ class Resolver(common.ResolverBase):
+     """
+     A resolver that services hosts(5) format files.
+     """
+-    def __init__(self, file=b'/etc/hosts', ttl = 60 * 60):
++    def __init__(self, file=b'/data/data/com.termux/files/usr/etc/hosts', ttl = 60 * 60):
+         common.ResolverBase.__init__(self)
+         self.file = file
+         self.ttl = ttl
+diff --git a/src/twisted/runner/inetdconf.py b/src/twisted/runner/inetdconf.py
+index 391f2e057..0495d9ce3 100644
+--- a/src/twisted/runner/inetdconf.py
++++ b/src/twisted/runner/inetdconf.py
+@@ -133,7 +133,7 @@ class InetdConf(SimpleConfFile):
+     Configuration parser for a traditional UNIX inetd(8)
+     """
+ 
+-    defaultFilename = '/etc/inetd.conf'
++    defaultFilename = '/data/data/com.termux/files/usr/etc/inetd.conf'
+ 
+     def __init__(self, knownServices=None):
+         self.services = []
+@@ -179,7 +179,7 @@ class ServicesConf(SimpleConfFile):
+     @ivar services: dict mapping service names to (port, protocol) tuples.
+     """
+ 
+-    defaultFilename = '/etc/services'
++    defaultFilename = '/data/data/com.termux/files/usr/etc/services'
+ 
+     def __init__(self):
+         self.services = {}
+diff --git a/src/twisted/web/twcgi.py b/src/twisted/web/twcgi.py
+index f668d0cb4..01378f4f8 100644
+--- a/src/twisted/web/twcgi.py
++++ b/src/twisted/web/twcgi.py
+@@ -169,7 +169,7 @@ class FilteredScript(CGIScript):
+     @ivar filter: The absolute path to the executable.
+     """
+ 
+-    filter = '/usr/bin/cat'
++    filter = '/data/data/com.termux/files/usr/bin/cat'
+ 
+ 
+     def runProcess(self, env, request, qargs=[]):
+-- 
+2.13.3
+

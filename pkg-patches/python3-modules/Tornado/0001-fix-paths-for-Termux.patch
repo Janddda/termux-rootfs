@@ -1,0 +1,28 @@
+From c40167dc27c4067b0312ea95298e947bd3dc22ca Mon Sep 17 00:00:00 2001
+From: Leonid Plyushch <leonid.plyushch@gmail.com>
+Date: Sat, 29 Jul 2017 17:21:29 +0300
+Subject: [PATCH] fix paths for Termux
+
+---
+ tornado/platform/twisted.py | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/tornado/platform/twisted.py b/tornado/platform/twisted.py
+index 0f9787e8..0b86d536 100644
+--- a/tornado/platform/twisted.py
++++ b/tornado/platform/twisted.py
+@@ -535,9 +535,9 @@ class TwistedResolver(Resolver):
+         # allow for a reactor to be passed in.
+         self.reactor = tornado.platform.twisted.TornadoReactor(io_loop)
+ 
+-        host_resolver = twisted.names.hosts.Resolver('/etc/hosts')
++        host_resolver = twisted.names.hosts.Resolver('/data/data/com.termux/files/usr/etc/hosts')
+         cache_resolver = twisted.names.cache.CacheResolver(reactor=self.reactor)
+-        real_resolver = twisted.names.client.Resolver('/etc/resolv.conf',
++        real_resolver = twisted.names.client.Resolver('/data/data/com.termux/files/usr/etc/resolv.conf',
+                                                       reactor=self.reactor)
+         self.resolver = twisted.names.resolve.ResolverChain(
+             [host_resolver, cache_resolver, real_resolver])
+-- 
+2.13.3
+

@@ -1,0 +1,25 @@
+From 84db5aa5fa23ef98f2c0d1c9999456f1e5d0ee0d Mon Sep 17 00:00:00 2001
+From: Leonid Plyushch <leonid.plyushch@gmail.com>
+Date: Sun, 30 Jul 2017 13:06:40 +0300
+Subject: [PATCH] fix IP in connection_url() for Termux
+
+---
+ notebook/notebookapp.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/notebook/notebookapp.py b/notebook/notebookapp.py
+index dac540550..a29c86f69 100755
+--- a/notebook/notebookapp.py
++++ b/notebook/notebookapp.py
+@@ -1148,7 +1148,7 @@ class NotebookApp(JupyterApp):
+ 
+     @property
+     def connection_url(self):
+-        ip = self.ip if self.ip else 'localhost'
++        ip = '127.0.0.1'
+         return self._url(ip)
+ 
+     def _url(self, ip):
+-- 
+2.13.3
+

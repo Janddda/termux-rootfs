@@ -1,0 +1,1888 @@
+From a39399045e7c766489b93fe0645f99d3ffc16547 Mon Sep 17 00:00:00 2001
+From: Leonid Plyushch <leonid.plyushch@gmail.com>
+Date: Wed, 29 Mar 2017 15:53:15 +0300
+Subject: [PATCH] fixes for Termux
+
+---
+ benchmarks/micro.sh                                |   2 +-
+ benchmarks/micro_greenlet_link.sh                  |   2 +-
+ benchmarks/micro_run_callback.sh                   |   2 +-
+ benchmarks/micro_semaphore.sh                      |   2 +-
+ benchmarks/micro_sleep.sh                          |   2 +-
+ deps/c-ares/buildconf                              |   2 +-
+ deps/c-ares/compile                                |   2 +-
+ deps/c-ares/config.guess                           | 136 +++++++++++---------
+ deps/c-ares/config.sub                             |  38 ++++--
+ deps/c-ares/configure                              |   8 +-
+ deps/c-ares/depcomp                                |   2 +-
+ deps/c-ares/install-sh                             |   2 +-
+ deps/c-ares/ltmain.sh                              |   2 +-
+ deps/c-ares/maketgz                                |   2 +-
+ deps/c-ares/missing                                |   2 +-
+ deps/c-ares/mkinstalldirs                          |   2 +-
+ deps/c-ares/test-driver                            |   2 +-
+ deps/libev/config.guess                            | 143 ++++++++++++---------
+ deps/libev/config.sub                              |  47 ++++---
+ deps/libev/configure                               |   8 +-
+ deps/libev/depcomp                                 |   2 +-
+ deps/libev/install-sh                              |   2 +-
+ deps/libev/missing                                 |   2 +-
+ doc/generate_rst.py                                |   2 +-
+ examples/concurrent_download.py                    |   2 +-
+ examples/dns_mass_resolve.py                       |   2 +-
+ examples/echoserver.py                             |   2 +-
+ examples/processes.py                              |   2 +-
+ examples/webchat/application.py                    |   2 +-
+ examples/webchat/manage.py                         |   2 +-
+ examples/webchat/run_standalone.py                 |   2 +-
+ examples/webchat/run_uwsgi                         |   2 +-
+ examples/webproxy.py                               |   2 +-
+ examples/webpy.py                                  |   2 +-
+ examples/wsgiserver.py                             |   2 +-
+ examples/wsgiserver_ssl.py                         |   2 +-
+ scripts/install.sh                                 |   2 +-
+ scripts/releases/geventrel.sh                      |   2 +-
+ scripts/releases/geventreleases.sh                 |   2 +-
+ scripts/releases/make-manylinux                    |   2 +-
+ setup.py                                           |   2 +-
+ src/gevent/subprocess.py                           |   2 +-
+ src/greentest/2.7/test_subprocess.py               |   8 +-
+ src/greentest/2.7pypy/test_subprocess.py           |   8 +-
+ src/greentest/3.3pypy/test_subprocess.py           |   8 +-
+ src/greentest/3.4/test_subprocess.py               |   8 +-
+ src/greentest/3.5/test_subprocess.py               |   8 +-
+ src/greentest/3.6/test_subprocess.py               |   4 +-
+ src/greentest/bench_sendall.py                     |   2 +-
+ src/greentest/test__import_blocking_in_greenlet.py |   2 +-
+ src/greentest/test__issue_728.py                   |   2 +-
+ src/greentest/test__socket_dns.py                  |   2 +-
+ src/greentest/test__socket_dns6.py                 |   2 +-
+ src/greentest/test__socket_ssl.py                  |   2 +-
+ src/greentest/testrunner.py                        |   2 +-
+ src/greentest/xtest_signal.py                      |   2 +-
+ util/cythonpp.py                                   |   2 +-
+ util/makedeb.sh                                    |   2 +-
+ util/makedist.py                                   |   2 +-
+ util/set_version.py                                |   2 +-
+ util/wintest.py                                    |   2 +-
+ 61 files changed, 292 insertions(+), 230 deletions(-)
+
+diff --git a/benchmarks/micro.sh b/benchmarks/micro.sh
+index 862b20b..885b589 100755
+--- a/benchmarks/micro.sh
++++ b/benchmarks/micro.sh
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/data/data/com.termux/files/usr/bin/sh
+ set -e -x
+ PYTHON=${PYTHON:=python}
+ $PYTHON -c 'from __future__ import print_function; import gevent.core; print(gevent.__version__, gevent.core.get_version(), getattr(gevent.core, "get_method", lambda: "n/a")(), getattr(gevent, "get_hub", lambda: "n/a")())'
+diff --git a/benchmarks/micro_greenlet_link.sh b/benchmarks/micro_greenlet_link.sh
+index 5903f1d..944ad1d 100755
+--- a/benchmarks/micro_greenlet_link.sh
++++ b/benchmarks/micro_greenlet_link.sh
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/data/data/com.termux/files/usr/bin/sh
+ set -e -x
+ PYTHON=${PYTHON:=python}
+ $PYTHON -mtimeit -r 6 -s'from gevent import spawn; from gevent.hub import xrange; g = spawn(lambda: 5); l = lambda: 5' 'for _ in xrange(1000): g.link(l)'
+diff --git a/benchmarks/micro_run_callback.sh b/benchmarks/micro_run_callback.sh
+index d975915..df3b8cc 100755
+--- a/benchmarks/micro_run_callback.sh
++++ b/benchmarks/micro_run_callback.sh
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/data/data/com.termux/files/usr/bin/sh
+ set -e -x
+ PYTHON=${PYTHON:=python}
+ $PYTHON -mtimeit -r 6 -s'from gevent import get_hub; run_cb = get_hub().loop.run_callback; f = lambda : 5' 'run_cb(f)'
+diff --git a/benchmarks/micro_semaphore.sh b/benchmarks/micro_semaphore.sh
+index d3cd909..b23d618 100755
+--- a/benchmarks/micro_semaphore.sh
++++ b/benchmarks/micro_semaphore.sh
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/data/data/com.termux/files/usr/bin/sh
+ set -e -x
+ PYTHON=${PYTHON:=python}
+ $PYTHON -mtimeit -r 6 -s'from gevent.lock import Semaphore; s = Semaphore()' 's.release()'
+diff --git a/benchmarks/micro_sleep.sh b/benchmarks/micro_sleep.sh
+index 35fa575..7e9148e 100755
+--- a/benchmarks/micro_sleep.sh
++++ b/benchmarks/micro_sleep.sh
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/data/data/com.termux/files/usr/bin/sh
+ set -e -x
+ PYTHON=${PYTHON:=python}
+ $PYTHON -mtimeit -r 6 -s'from gevent import sleep; f = lambda : 5' 'sleep(0)'
+diff --git a/deps/c-ares/buildconf b/deps/c-ares/buildconf
+index a779d86..c997527 100755
+--- a/deps/c-ares/buildconf
++++ b/deps/c-ares/buildconf
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/data/data/com.termux/files/usr/bin/sh
+ 
+ #--------------------------------------------------------------------------
+ # die prints argument string to stdout and exits this shell script.
+diff --git a/deps/c-ares/compile b/deps/c-ares/compile
+index a85b723..0dcef50 100755
+--- a/deps/c-ares/compile
++++ b/deps/c-ares/compile
+@@ -1,4 +1,4 @@
+-#! /bin/sh
++#!/data/data/com.termux/files/usr/bin/sh
+ # Wrapper for compilers which do not understand '-c -o'.
+ 
+ scriptversion=2012-10-14.11; # UTC
+diff --git a/deps/c-ares/config.guess b/deps/c-ares/config.guess
+index 1659250..1094894 100755
+--- a/deps/c-ares/config.guess
++++ b/deps/c-ares/config.guess
+@@ -1,8 +1,8 @@
+-#! /bin/sh
++#!/data/data/com.termux/files/usr/bin/sh
+ # Attempt to guess a canonical system name.
+-#   Copyright 1992-2015 Free Software Foundation, Inc.
++#   Copyright 1992-2016 Free Software Foundation, Inc.
+ 
+-timestamp='2015-08-20'
++timestamp='2016-09-11'
+ 
+ # This file is free software; you can redistribute it and/or modify it
+ # under the terms of the GNU General Public License as published by
+@@ -27,7 +27,7 @@ timestamp='2015-08-20'
+ # Originally written by Per Bothner; maintained since 2000 by Ben Elliston.
+ #
+ # You can get the latest version of this script from:
+-# http://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=HEAD
++# http://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess
+ #
+ # Please send patches to <config-patches@gnu.org>.
+ 
+@@ -50,7 +50,7 @@ version="\
+ GNU config.guess ($timestamp)
+ 
+ Originally written by Per Bothner.
+-Copyright 1992-2015 Free Software Foundation, Inc.
++Copyright 1992-2016 Free Software Foundation, Inc.
+ 
+ This is free software; see the source for copying conditions.  There is NO
+ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+@@ -186,9 +186,12 @@ case "${UNAME_MACHINE}:${UNAME_SYSTEM}:${UNAME_RELEASE}:${UNAME_VERSION}" in
+ 	    *) machine=${UNAME_MACHINE_ARCH}-unknown ;;
+ 	esac
+ 	# The Operating System including object format, if it has switched
+-	# to ELF recently, or will in the future.
++	# to ELF recently (or will in the future) and ABI.
+ 	case "${UNAME_MACHINE_ARCH}" in
+-	    arm*|earm*|i386|m68k|ns32k|sh3*|sparc|vax)
++	    earm*)
++		os=netbsdelf
++		;;
++	    arm*|i386|m68k|ns32k|sh3*|sparc|vax)
+ 		eval $set_cc_for_build
+ 		if echo __ELF__ | $CC_FOR_BUILD -E - 2>/dev/null \
+ 			| grep -q __ELF__
+@@ -237,6 +240,10 @@ case "${UNAME_MACHINE}:${UNAME_SYSTEM}:${UNAME_RELEASE}:${UNAME_VERSION}" in
+ 	UNAME_MACHINE_ARCH=`arch | sed 's/OpenBSD.//'`
+ 	echo ${UNAME_MACHINE_ARCH}-unknown-openbsd${UNAME_RELEASE}
+ 	exit ;;
++    *:LibertyBSD:*:*)
++	UNAME_MACHINE_ARCH=`arch | sed 's/^.*BSD\.//'`
++	echo ${UNAME_MACHINE_ARCH}-unknown-libertybsd${UNAME_RELEASE}
++	exit ;;
+     *:ekkoBSD:*:*)
+ 	echo ${UNAME_MACHINE}-unknown-ekkobsd${UNAME_RELEASE}
+ 	exit ;;
+@@ -268,42 +275,42 @@ case "${UNAME_MACHINE}:${UNAME_SYSTEM}:${UNAME_RELEASE}:${UNAME_VERSION}" in
+ 	ALPHA_CPU_TYPE=`/usr/sbin/psrinfo -v | sed -n -e 's/^  The alpha \(.*\) processor.*$/\1/p' | head -n 1`
+ 	case "$ALPHA_CPU_TYPE" in
+ 	    "EV4 (21064)")
+-		UNAME_MACHINE="alpha" ;;
++		UNAME_MACHINE=alpha ;;
+ 	    "EV4.5 (21064)")
+-		UNAME_MACHINE="alpha" ;;
++		UNAME_MACHINE=alpha ;;
+ 	    "LCA4 (21066/21068)")
+-		UNAME_MACHINE="alpha" ;;
++		UNAME_MACHINE=alpha ;;
+ 	    "EV5 (21164)")
+-		UNAME_MACHINE="alphaev5" ;;
++		UNAME_MACHINE=alphaev5 ;;
+ 	    "EV5.6 (21164A)")
+-		UNAME_MACHINE="alphaev56" ;;
++		UNAME_MACHINE=alphaev56 ;;
+ 	    "EV5.6 (21164PC)")
+-		UNAME_MACHINE="alphapca56" ;;
++		UNAME_MACHINE=alphapca56 ;;
+ 	    "EV5.7 (21164PC)")
+-		UNAME_MACHINE="alphapca57" ;;
++		UNAME_MACHINE=alphapca57 ;;
+ 	    "EV6 (21264)")
+-		UNAME_MACHINE="alphaev6" ;;
++		UNAME_MACHINE=alphaev6 ;;
+ 	    "EV6.7 (21264A)")
+-		UNAME_MACHINE="alphaev67" ;;
++		UNAME_MACHINE=alphaev67 ;;
+ 	    "EV6.8CB (21264C)")
+-		UNAME_MACHINE="alphaev68" ;;
++		UNAME_MACHINE=alphaev68 ;;
+ 	    "EV6.8AL (21264B)")
+-		UNAME_MACHINE="alphaev68" ;;
++		UNAME_MACHINE=alphaev68 ;;
+ 	    "EV6.8CX (21264D)")
+-		UNAME_MACHINE="alphaev68" ;;
++		UNAME_MACHINE=alphaev68 ;;
+ 	    "EV6.9A (21264/EV69A)")
+-		UNAME_MACHINE="alphaev69" ;;
++		UNAME_MACHINE=alphaev69 ;;
+ 	    "EV7 (21364)")
+-		UNAME_MACHINE="alphaev7" ;;
++		UNAME_MACHINE=alphaev7 ;;
+ 	    "EV7.9 (21364A)")
+-		UNAME_MACHINE="alphaev79" ;;
++		UNAME_MACHINE=alphaev79 ;;
+ 	esac
+ 	# A Pn.n version is a patched version.
+ 	# A Vn.n version is a released version.
+ 	# A Tn.n version is a released field test version.
+ 	# A Xn.n version is an unreleased experimental baselevel.
+ 	# 1.2 uses "1.2" for uname -r.
+-	echo ${UNAME_MACHINE}-dec-osf`echo ${UNAME_RELEASE} | sed -e 's/^[PVTX]//' | tr 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' 'abcdefghijklmnopqrstuvwxyz'`
++	echo ${UNAME_MACHINE}-dec-osf`echo ${UNAME_RELEASE} | sed -e 's/^[PVTX]//' | tr ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz`
+ 	# Reset EXIT trap before exiting to avoid spurious non-zero exit code.
+ 	exitcode=$?
+ 	trap '' 0
+@@ -376,16 +383,16 @@ case "${UNAME_MACHINE}:${UNAME_SYSTEM}:${UNAME_RELEASE}:${UNAME_VERSION}" in
+ 	exit ;;
+     i86pc:SunOS:5.*:* | i86xen:SunOS:5.*:*)
+ 	eval $set_cc_for_build
+-	SUN_ARCH="i386"
++	SUN_ARCH=i386
+ 	# If there is a compiler, see if it is configured for 64-bit objects.
+ 	# Note that the Sun cc does not turn __LP64__ into 1 like gcc does.
+ 	# This test works for both compilers.
+-	if [ "$CC_FOR_BUILD" != 'no_compiler_found' ]; then
++	if [ "$CC_FOR_BUILD" != no_compiler_found ]; then
+ 	    if (echo '#ifdef __amd64'; echo IS_64BIT_ARCH; echo '#endif') | \
+-		(CCOPTS= $CC_FOR_BUILD -E - 2>/dev/null) | \
++		(CCOPTS="" $CC_FOR_BUILD -E - 2>/dev/null) | \
+ 		grep IS_64BIT_ARCH >/dev/null
+ 	    then
+-		SUN_ARCH="x86_64"
++		SUN_ARCH=x86_64
+ 	    fi
+ 	fi
+ 	echo ${SUN_ARCH}-pc-solaris2`echo ${UNAME_RELEASE}|sed -e 's/[^.]*//'`
+@@ -410,7 +417,7 @@ case "${UNAME_MACHINE}:${UNAME_SYSTEM}:${UNAME_RELEASE}:${UNAME_VERSION}" in
+ 	exit ;;
+     sun*:*:4.2BSD:*)
+ 	UNAME_RELEASE=`(sed 1q /etc/motd | awk '{print substr($5,1,3)}') 2>/dev/null`
+-	test "x${UNAME_RELEASE}" = "x" && UNAME_RELEASE=3
++	test "x${UNAME_RELEASE}" = x && UNAME_RELEASE=3
+ 	case "`/bin/arch`" in
+ 	    sun3)
+ 		echo m68k-sun-sunos${UNAME_RELEASE}
+@@ -635,13 +642,13 @@ EOF
+ 		    sc_cpu_version=`/usr/bin/getconf SC_CPU_VERSION 2>/dev/null`
+ 		    sc_kernel_bits=`/usr/bin/getconf SC_KERNEL_BITS 2>/dev/null`
+ 		    case "${sc_cpu_version}" in
+-		      523) HP_ARCH="hppa1.0" ;; # CPU_PA_RISC1_0
+-		      528) HP_ARCH="hppa1.1" ;; # CPU_PA_RISC1_1
++		      523) HP_ARCH=hppa1.0 ;; # CPU_PA_RISC1_0
++		      528) HP_ARCH=hppa1.1 ;; # CPU_PA_RISC1_1
+ 		      532)                      # CPU_PA_RISC2_0
+ 			case "${sc_kernel_bits}" in
+-			  32) HP_ARCH="hppa2.0n" ;;
+-			  64) HP_ARCH="hppa2.0w" ;;
+-			  '') HP_ARCH="hppa2.0" ;;   # HP-UX 10.20
++			  32) HP_ARCH=hppa2.0n ;;
++			  64) HP_ARCH=hppa2.0w ;;
++			  '') HP_ARCH=hppa2.0 ;;   # HP-UX 10.20
+ 			esac ;;
+ 		    esac
+ 		fi
+@@ -680,11 +687,11 @@ EOF
+ 		    exit (0);
+ 		}
+ EOF
+-		    (CCOPTS= $CC_FOR_BUILD -o $dummy $dummy.c 2>/dev/null) && HP_ARCH=`$dummy`
++		    (CCOPTS="" $CC_FOR_BUILD -o $dummy $dummy.c 2>/dev/null) && HP_ARCH=`$dummy`
+ 		    test -z "$HP_ARCH" && HP_ARCH=hppa
+ 		fi ;;
+ 	esac
+-	if [ ${HP_ARCH} = "hppa2.0w" ]
++	if [ ${HP_ARCH} = hppa2.0w ]
+ 	then
+ 	    eval $set_cc_for_build
+ 
+@@ -697,12 +704,12 @@ EOF
+ 	    # $ CC_FOR_BUILD="cc +DA2.0w" ./config.guess
+ 	    # => hppa64-hp-hpux11.23
+ 
+-	    if echo __LP64__ | (CCOPTS= $CC_FOR_BUILD -E - 2>/dev/null) |
++	    if echo __LP64__ | (CCOPTS="" $CC_FOR_BUILD -E - 2>/dev/null) |
+ 		grep -q __LP64__
+ 	    then
+-		HP_ARCH="hppa2.0w"
++		HP_ARCH=hppa2.0w
+ 	    else
+-		HP_ARCH="hppa64"
++		HP_ARCH=hppa64
+ 	    fi
+ 	fi
+ 	echo ${HP_ARCH}-hp-hpux${HPUX_REV}
+@@ -807,14 +814,14 @@ EOF
+ 	echo craynv-cray-unicosmp${UNAME_RELEASE} | sed -e 's/\.[^.]*$/.X/'
+ 	exit ;;
+     F30[01]:UNIX_System_V:*:* | F700:UNIX_System_V:*:*)
+-	FUJITSU_PROC=`uname -m | tr 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' 'abcdefghijklmnopqrstuvwxyz'`
+-	FUJITSU_SYS=`uname -p | tr 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' 'abcdefghijklmnopqrstuvwxyz' | sed -e 's/\///'`
++	FUJITSU_PROC=`uname -m | tr ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz`
++	FUJITSU_SYS=`uname -p | tr ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz | sed -e 's/\///'`
+ 	FUJITSU_REL=`echo ${UNAME_RELEASE} | sed -e 's/ /_/'`
+ 	echo "${FUJITSU_PROC}-fujitsu-${FUJITSU_SYS}${FUJITSU_REL}"
+ 	exit ;;
+     5000:UNIX_System_V:4.*:*)
+-	FUJITSU_SYS=`uname -p | tr 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' 'abcdefghijklmnopqrstuvwxyz' | sed -e 's/\///'`
+-	FUJITSU_REL=`echo ${UNAME_RELEASE} | tr 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' 'abcdefghijklmnopqrstuvwxyz' | sed -e 's/ /_/'`
++	FUJITSU_SYS=`uname -p | tr ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz | sed -e 's/\///'`
++	FUJITSU_REL=`echo ${UNAME_RELEASE} | tr ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz | sed -e 's/ /_/'`
+ 	echo "sparc-fujitsu-${FUJITSU_SYS}${FUJITSU_REL}"
+ 	exit ;;
+     i*86:BSD/386:*:* | i*86:BSD/OS:*:* | *:Ascend\ Embedded/OS:*:*)
+@@ -896,7 +903,7 @@ EOF
+ 	exit ;;
+     *:GNU/*:*:*)
+ 	# other systems with GNU libc and userland
+-	echo ${UNAME_MACHINE}-unknown-`echo ${UNAME_SYSTEM} | sed 's,^[^/]*/,,' | tr '[A-Z]' '[a-z]'``echo ${UNAME_RELEASE}|sed -e 's/[-(].*//'`-${LIBC}
++	echo ${UNAME_MACHINE}-unknown-`echo ${UNAME_SYSTEM} | sed 's,^[^/]*/,,' | tr "[:upper:]" "[:lower:]"``echo ${UNAME_RELEASE}|sed -e 's/[-(].*//'`-${LIBC}
+ 	exit ;;
+     i*86:Minix:*:*)
+ 	echo ${UNAME_MACHINE}-pc-minix
+@@ -919,7 +926,7 @@ EOF
+ 	  EV68*) UNAME_MACHINE=alphaev68 ;;
+ 	esac
+ 	objdump --private-headers /bin/sh | grep -q ld.so.1
+-	if test "$?" = 0 ; then LIBC="gnulibc1" ; fi
++	if test "$?" = 0 ; then LIBC=gnulibc1 ; fi
+ 	echo ${UNAME_MACHINE}-unknown-linux-${LIBC}
+ 	exit ;;
+     arc:Linux:*:* | arceb:Linux:*:*)
+@@ -965,6 +972,9 @@ EOF
+     ia64:Linux:*:*)
+ 	echo ${UNAME_MACHINE}-unknown-linux-${LIBC}
+ 	exit ;;
++    k1om:Linux:*:*)
++	echo ${UNAME_MACHINE}-unknown-linux-${LIBC}
++	exit ;;
+     m32r*:Linux:*:*)
+ 	echo ${UNAME_MACHINE}-unknown-linux-${LIBC}
+ 	exit ;;
+@@ -1022,6 +1032,9 @@ EOF
+     ppcle:Linux:*:*)
+ 	echo powerpcle-unknown-linux-${LIBC}
+ 	exit ;;
++    riscv32:Linux:*:* | riscv64:Linux:*:*)
++	echo ${UNAME_MACHINE}-unknown-linux-${LIBC}
++	exit ;;
+     s390:Linux:*:* | s390x:Linux:*:*)
+ 	echo ${UNAME_MACHINE}-ibm-linux-${LIBC}
+ 	exit ;;
+@@ -1120,7 +1133,7 @@ EOF
+ 	# uname -m prints for DJGPP always 'pc', but it prints nothing about
+ 	# the processor, so we play safe by assuming i586.
+ 	# Note: whatever this is, it MUST be the same as what config.sub
+-	# prints for the "djgpp" host, or else GDB configury will decide that
++	# prints for the "djgpp" host, or else GDB configure will decide that
+ 	# this is a cross-build.
+ 	echo i586-pc-msdosdjgpp
+ 	exit ;;
+@@ -1269,6 +1282,9 @@ EOF
+     SX-8R:SUPER-UX:*:*)
+ 	echo sx8r-nec-superux${UNAME_RELEASE}
+ 	exit ;;
++    SX-ACE:SUPER-UX:*:*)
++	echo sxace-nec-superux${UNAME_RELEASE}
++	exit ;;
+     Power*:Rhapsody:*:*)
+ 	echo powerpc-apple-rhapsody${UNAME_RELEASE}
+ 	exit ;;
+@@ -1282,9 +1298,9 @@ EOF
+ 	    UNAME_PROCESSOR=powerpc
+ 	fi
+ 	if test `echo "$UNAME_RELEASE" | sed -e 's/\..*//'` -le 10 ; then
+-	    if [ "$CC_FOR_BUILD" != 'no_compiler_found' ]; then
++	    if [ "$CC_FOR_BUILD" != no_compiler_found ]; then
+ 		if (echo '#ifdef __LP64__'; echo IS_64BIT_ARCH; echo '#endif') | \
+-		    (CCOPTS= $CC_FOR_BUILD -E - 2>/dev/null) | \
++		    (CCOPTS="" $CC_FOR_BUILD -E - 2>/dev/null) | \
+ 		    grep IS_64BIT_ARCH >/dev/null
+ 		then
+ 		    case $UNAME_PROCESSOR in
+@@ -1306,7 +1322,7 @@ EOF
+ 	exit ;;
+     *:procnto*:*:* | *:QNX:[0123456789]*:*)
+ 	UNAME_PROCESSOR=`uname -p`
+-	if test "$UNAME_PROCESSOR" = "x86"; then
++	if test "$UNAME_PROCESSOR" = x86; then
+ 		UNAME_PROCESSOR=i386
+ 		UNAME_MACHINE=pc
+ 	fi
+@@ -1337,7 +1353,7 @@ EOF
+ 	# "uname -m" is not consistent, so use $cputype instead. 386
+ 	# is converted to i386 for consistency with other x86
+ 	# operating systems.
+-	if test "$cputype" = "386"; then
++	if test "$cputype" = 386; then
+ 	    UNAME_MACHINE=i386
+ 	else
+ 	    UNAME_MACHINE="$cputype"
+@@ -1379,7 +1395,7 @@ EOF
+ 	echo i386-pc-xenix
+ 	exit ;;
+     i*86:skyos:*:*)
+-	echo ${UNAME_MACHINE}-pc-skyos`echo ${UNAME_RELEASE}` | sed -e 's/ .*$//'
++	echo ${UNAME_MACHINE}-pc-skyos`echo ${UNAME_RELEASE} | sed -e 's/ .*$//'`
+ 	exit ;;
+     i*86:rdos:*:*)
+ 	echo ${UNAME_MACHINE}-pc-rdos
+@@ -1390,23 +1406,25 @@ EOF
+     x86_64:VMkernel:*:*)
+ 	echo ${UNAME_MACHINE}-unknown-esx
+ 	exit ;;
++    amd64:Isilon\ OneFS:*:*)
++	echo x86_64-unknown-onefs
++	exit ;;
+ esac
+ 
+ cat >&2 <<EOF
+ $0: unable to guess system type
+ 
+-This script, last modified $timestamp, has failed to recognize
+-the operating system you are using. It is advised that you
+-download the most up to date version of the config scripts from
++This script (version $timestamp), has failed to recognize the
++operating system you are using. If your script is old, overwrite
++config.guess and config.sub with the latest versions from:
+ 
+-  http://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=HEAD
++  http://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess
+ and
+-  http://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.sub;hb=HEAD
++  http://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.sub
+ 
+-If the version you run ($0) is already up to date, please
+-send the following data and any information you think might be
+-pertinent to <config-patches@gnu.org> in order to provide the needed
+-information to handle your system.
++If $0 has already been updated, send the following data and any
++information you think might be pertinent to config-patches@gnu.org to
++provide the necessary information to handle your system.
+ 
+ config.guess timestamp = $timestamp
+ 
+diff --git a/deps/c-ares/config.sub b/deps/c-ares/config.sub
+index 1acc966..6f8facd 100755
+--- a/deps/c-ares/config.sub
++++ b/deps/c-ares/config.sub
+@@ -1,8 +1,8 @@
+-#! /bin/sh
++#!/data/data/com.termux/files/usr/bin/sh
+ # Configuration validation subroutine script.
+-#   Copyright 1992-2015 Free Software Foundation, Inc.
++#   Copyright 1992-2016 Free Software Foundation, Inc.
+ 
+-timestamp='2015-08-20'
++timestamp='2016-09-05'
+ 
+ # This file is free software; you can redistribute it and/or modify it
+ # under the terms of the GNU General Public License as published by
+@@ -33,7 +33,7 @@ timestamp='2015-08-20'
+ # Otherwise, we print the canonical config type on stdout and succeed.
+ 
+ # You can get the latest version of this script from:
+-# http://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.sub;hb=HEAD
++# http://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.sub
+ 
+ # This file is supposed to be the same for all GNU packages
+ # and recognize all the CPU types, system types and aliases
+@@ -53,8 +53,7 @@ timestamp='2015-08-20'
+ me=`echo "$0" | sed -e 's,.*/,,'`
+ 
+ usage="\
+-Usage: $0 [OPTION] CPU-MFR-OPSYS
+-       $0 [OPTION] ALIAS
++Usage: $0 [OPTION] CPU-MFR-OPSYS or ALIAS
+ 
+ Canonicalize a configuration name.
+ 
+@@ -68,7 +67,7 @@ Report bugs and patches to <config-patches@gnu.org>."
+ version="\
+ GNU config.sub ($timestamp)
+ 
+-Copyright 1992-2015 Free Software Foundation, Inc.
++Copyright 1992-2016 Free Software Foundation, Inc.
+ 
+ This is free software; see the source for copying conditions.  There is NO
+ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+@@ -118,7 +117,7 @@ case $maybe_os in
+   nto-qnx* | linux-gnu* | linux-android* | linux-dietlibc | linux-newlib* | \
+   linux-musl* | linux-uclibc* | uclinux-uclibc* | uclinux-gnu* | kfreebsd*-gnu* | \
+   knetbsd*-gnu* | netbsd*-gnu* | netbsd*-eabi* | \
+-  kopensolaris*-gnu* | \
++  kopensolaris*-gnu* | cloudabi*-eabi* | \
+   storm-chaos* | os2-emx* | rtmk-nova*)
+     os=-$maybe_os
+     basic_machine=`echo $1 | sed 's/^\(.*\)-\([^-]*-[^-]*\)$/\1/'`
+@@ -521,7 +520,7 @@ case $basic_machine in
+ 		basic_machine=i386-pc
+ 		os=-aros
+ 		;;
+-        asmjs)
++	asmjs)
+ 		basic_machine=asmjs-unknown
+ 		;;
+ 	aux)
+@@ -644,6 +643,14 @@ case $basic_machine in
+ 		basic_machine=m68k-bull
+ 		os=-sysv3
+ 		;;
++	e500v[12])
++		basic_machine=powerpc-unknown
++		os=$os"spe"
++		;;
++	e500v[12]-*)
++		basic_machine=powerpc-`echo $basic_machine | sed 's/^[^-]*-//'`
++		os=$os"spe"
++		;;
+ 	ebmon29k)
+ 		basic_machine=a29k-amd
+ 		os=-ebmon
+@@ -1023,7 +1030,7 @@ case $basic_machine in
+ 	ppc-* | ppcbe-*)
+ 		basic_machine=powerpc-`echo $basic_machine | sed 's/^[^-]*-//'`
+ 		;;
+-	ppcle | powerpclittle | ppc-le | powerpc-little)
++	ppcle | powerpclittle)
+ 		basic_machine=powerpcle-unknown
+ 		;;
+ 	ppcle-* | powerpclittle-*)
+@@ -1033,7 +1040,7 @@ case $basic_machine in
+ 		;;
+ 	ppc64-*) basic_machine=powerpc64-`echo $basic_machine | sed 's/^[^-]*-//'`
+ 		;;
+-	ppc64le | powerpc64little | ppc64-le | powerpc64-little)
++	ppc64le | powerpc64little)
+ 		basic_machine=powerpc64le-unknown
+ 		;;
+ 	ppc64le-* | powerpc64little-*)
+@@ -1383,14 +1390,14 @@ case $os in
+ 	      | -nindy* | -vxsim* | -vxworks* | -ebmon* | -hms* | -mvs* \
+ 	      | -clix* | -riscos* | -uniplus* | -iris* | -rtu* | -xenix* \
+ 	      | -hiux* | -386bsd* | -knetbsd* | -mirbsd* | -netbsd* \
+-	      | -bitrig* | -openbsd* | -solidbsd* \
++	      | -bitrig* | -openbsd* | -solidbsd* | -libertybsd* \
+ 	      | -ekkobsd* | -kfreebsd* | -freebsd* | -riscix* | -lynxos* \
+ 	      | -bosx* | -nextstep* | -cxux* | -aout* | -elf* | -oabi* \
+ 	      | -ptx* | -coff* | -ecoff* | -winnt* | -domain* | -vsta* \
+ 	      | -udi* | -eabi* | -lites* | -ieee* | -go32* | -aux* \
+ 	      | -chorusos* | -chorusrdb* | -cegcc* \
+ 	      | -cygwin* | -msys* | -pe* | -psos* | -moss* | -proelf* | -rtems* \
+-	      | -mingw32* | -mingw64* | -linux-gnu* | -linux-android* \
++	      | -midipix* | -mingw32* | -mingw64* | -linux-gnu* | -linux-android* \
+ 	      | -linux-newlib* | -linux-musl* | -linux-uclibc* \
+ 	      | -uxpv* | -beos* | -mpeix* | -udk* | -moxiebox* \
+ 	      | -interix* | -uwin* | -mks* | -rhapsody* | -darwin* | -opened* \
+@@ -1399,7 +1406,8 @@ case $os in
+ 	      | -os2* | -vos* | -palmos* | -uclinux* | -nucleus* \
+ 	      | -morphos* | -superux* | -rtmk* | -rtmk-nova* | -windiss* \
+ 	      | -powermax* | -dnix* | -nx6 | -nx7 | -sei* | -dragonfly* \
+-	      | -skyos* | -haiku* | -rdos* | -toppers* | -drops* | -es* | -tirtos*)
++	      | -skyos* | -haiku* | -rdos* | -toppers* | -drops* | -es* \
++	      | -onefs* | -tirtos* | -phoenix*)
+ 	# Remember, each alternative MUST END IN *, to match a version number.
+ 		;;
+ 	-qnx*)
+@@ -1531,6 +1539,8 @@ case $os in
+ 		;;
+ 	-nacl*)
+ 		;;
++	-ios)
++		;;
+ 	-none)
+ 		;;
+ 	*)
+diff --git a/deps/c-ares/configure b/deps/c-ares/configure
+index 6aa90cf..e63170c 100755
+--- a/deps/c-ares/configure
++++ b/deps/c-ares/configure
+@@ -1,4 +1,4 @@
+-#! /bin/sh
++#!/data/data/com.termux/files/usr/bin/sh
+ # Guess values for system-dependent variables and create Makefiles.
+ # Generated by GNU Autoconf 2.69 for c-ares 1.12.0.
+ #
+@@ -518,7 +518,7 @@ $0: run the script under such a shell if you do have one."
+ fi
+ fi
+ fi
+-SHELL=${CONFIG_SHELL-/bin/sh}
++SHELL=${CONFIG_SHELL-/data/data/com.termux/files/usr/bin/sh}
+ export SHELL
+ # Unset more variables known to interfere with behavior of common tools.
+ CLICOLOR_FORCE= GREP_OPTIONS=
+@@ -798,7 +798,7 @@ as_tr_cpp="eval sed 'y%*$as_cr_letters%P$as_cr_LETTERS%;s%[^_$as_cr_alnum]%_%g'"
+ # Sed expression to map a string onto a valid variable name.
+ as_tr_sh="eval sed 'y%*+%pp%;s%[^_$as_cr_alnum]%_%g'"
+ 
+-SHELL=${CONFIG_SHELL-/bin/sh}
++SHELL=${CONFIG_SHELL-/data/data/com.termux/files/usr/bin/sh}
+ 
+ 
+ test -n "$DJDIR" || exec 7<&0 </dev/null
+@@ -8341,7 +8341,7 @@ else
+       for i in 1 2 3 4 5 6 7 8; do
+         teststring=$teststring$teststring
+       done
+-      SHELL=${SHELL-${CONFIG_SHELL-/bin/sh}}
++      SHELL=${SHELL-${CONFIG_SHELL-/data/data/com.termux/files/usr/bin/sh}}
+       # If test is not a shell built-in, we'll probably end up computing a
+       # maximum length that is only half of the actual maximum length, but
+       # we can't tell.
+diff --git a/deps/c-ares/depcomp b/deps/c-ares/depcomp
+index fc98710..a55f29a 100755
+--- a/deps/c-ares/depcomp
++++ b/deps/c-ares/depcomp
+@@ -1,4 +1,4 @@
+-#! /bin/sh
++#!/data/data/com.termux/files/usr/bin/sh
+ # depcomp - compile a program generating dependencies as side-effects
+ 
+ scriptversion=2013-05-30.07; # UTC
+diff --git a/deps/c-ares/install-sh b/deps/c-ares/install-sh
+index 377bb86..6489510 100755
+--- a/deps/c-ares/install-sh
++++ b/deps/c-ares/install-sh
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/data/data/com.termux/files/usr/bin/sh
+ # install - install a program, script, or datafile
+ 
+ scriptversion=2011-11-20.07; # UTC
+diff --git a/deps/c-ares/ltmain.sh b/deps/c-ares/ltmain.sh
+index 147d758..1f649e8 100644
+--- a/deps/c-ares/ltmain.sh
++++ b/deps/c-ares/ltmain.sh
+@@ -1,4 +1,4 @@
+-#! /bin/sh
++#!/data/data/com.termux/files/usr/bin/sh
+ ## DO NOT EDIT - This file generated from ./build-aux/ltmain.in
+ ##               by inline-source v2014-01-03.01
+ 
+diff --git a/deps/c-ares/maketgz b/deps/c-ares/maketgz
+index e3bb77a..85b5032 100755
+--- a/deps/c-ares/maketgz
++++ b/deps/c-ares/maketgz
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env perl
++#!/data/data/com.termux/files/usr/bin/env perl
+ 
+ $version = $ARGV[0];
+ 
+diff --git a/deps/c-ares/missing b/deps/c-ares/missing
+index f62bbae..fc1f61f 100755
+--- a/deps/c-ares/missing
++++ b/deps/c-ares/missing
+@@ -1,4 +1,4 @@
+-#! /bin/sh
++#!/data/data/com.termux/files/usr/bin/sh
+ # Common wrapper for a few potentially missing GNU programs.
+ 
+ scriptversion=2013-10-28.13; # UTC
+diff --git a/deps/c-ares/mkinstalldirs b/deps/c-ares/mkinstalldirs
+index 55d537f..97e0920 100755
+--- a/deps/c-ares/mkinstalldirs
++++ b/deps/c-ares/mkinstalldirs
+@@ -1,4 +1,4 @@
+-#! /bin/sh
++#!/data/data/com.termux/files/usr/bin/sh
+ # mkinstalldirs --- make directory hierarchy
+ 
+ scriptversion=2009-04-28.21; # UTC
+diff --git a/deps/c-ares/test-driver b/deps/c-ares/test-driver
+index 8e575b0..d145540 100755
+--- a/deps/c-ares/test-driver
++++ b/deps/c-ares/test-driver
+@@ -1,4 +1,4 @@
+-#! /bin/sh
++#!/data/data/com.termux/files/usr/bin/sh
+ # test-driver - basic testsuite driver script.
+ 
+ scriptversion=2013-07-13.22; # UTC
+diff --git a/deps/libev/config.guess b/deps/libev/config.guess
+index f7eb141..1094894 100755
+--- a/deps/libev/config.guess
++++ b/deps/libev/config.guess
+@@ -1,8 +1,8 @@
+-#! /bin/sh
++#!/data/data/com.termux/files/usr/bin/sh
+ # Attempt to guess a canonical system name.
+-#   Copyright 1992-2015 Free Software Foundation, Inc.
++#   Copyright 1992-2016 Free Software Foundation, Inc.
+ 
+-timestamp='2015-03-04'
++timestamp='2016-09-11'
+ 
+ # This file is free software; you can redistribute it and/or modify it
+ # under the terms of the GNU General Public License as published by
+@@ -27,7 +27,7 @@ timestamp='2015-03-04'
+ # Originally written by Per Bothner; maintained since 2000 by Ben Elliston.
+ #
+ # You can get the latest version of this script from:
+-# http://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=HEAD
++# http://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess
+ #
+ # Please send patches to <config-patches@gnu.org>.
+ 
+@@ -50,7 +50,7 @@ version="\
+ GNU config.guess ($timestamp)
+ 
+ Originally written by Per Bothner.
+-Copyright 1992-2015 Free Software Foundation, Inc.
++Copyright 1992-2016 Free Software Foundation, Inc.
+ 
+ This is free software; see the source for copying conditions.  There is NO
+ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+@@ -186,9 +186,12 @@ case "${UNAME_MACHINE}:${UNAME_SYSTEM}:${UNAME_RELEASE}:${UNAME_VERSION}" in
+ 	    *) machine=${UNAME_MACHINE_ARCH}-unknown ;;
+ 	esac
+ 	# The Operating System including object format, if it has switched
+-	# to ELF recently, or will in the future.
++	# to ELF recently (or will in the future) and ABI.
+ 	case "${UNAME_MACHINE_ARCH}" in
+-	    arm*|earm*|i386|m68k|ns32k|sh3*|sparc|vax)
++	    earm*)
++		os=netbsdelf
++		;;
++	    arm*|i386|m68k|ns32k|sh3*|sparc|vax)
+ 		eval $set_cc_for_build
+ 		if echo __ELF__ | $CC_FOR_BUILD -E - 2>/dev/null \
+ 			| grep -q __ELF__
+@@ -221,7 +224,7 @@ case "${UNAME_MACHINE}:${UNAME_SYSTEM}:${UNAME_RELEASE}:${UNAME_VERSION}" in
+ 		release='-gnu'
+ 		;;
+ 	    *)
+-		release=`echo ${UNAME_RELEASE}|sed -e 's/[-_].*/\./'`
++		release=`echo ${UNAME_RELEASE} | sed -e 's/[-_].*//' | cut -d. -f1,2`
+ 		;;
+ 	esac
+ 	# Since CPU_TYPE-MANUFACTURER-KERNEL-OPERATING_SYSTEM:
+@@ -237,6 +240,10 @@ case "${UNAME_MACHINE}:${UNAME_SYSTEM}:${UNAME_RELEASE}:${UNAME_VERSION}" in
+ 	UNAME_MACHINE_ARCH=`arch | sed 's/OpenBSD.//'`
+ 	echo ${UNAME_MACHINE_ARCH}-unknown-openbsd${UNAME_RELEASE}
+ 	exit ;;
++    *:LibertyBSD:*:*)
++	UNAME_MACHINE_ARCH=`arch | sed 's/^.*BSD\.//'`
++	echo ${UNAME_MACHINE_ARCH}-unknown-libertybsd${UNAME_RELEASE}
++	exit ;;
+     *:ekkoBSD:*:*)
+ 	echo ${UNAME_MACHINE}-unknown-ekkobsd${UNAME_RELEASE}
+ 	exit ;;
+@@ -249,6 +256,9 @@ case "${UNAME_MACHINE}:${UNAME_SYSTEM}:${UNAME_RELEASE}:${UNAME_VERSION}" in
+     *:MirBSD:*:*)
+ 	echo ${UNAME_MACHINE}-unknown-mirbsd${UNAME_RELEASE}
+ 	exit ;;
++    *:Sortix:*:*)
++	echo ${UNAME_MACHINE}-unknown-sortix
++	exit ;;
+     alpha:OSF1:*:*)
+ 	case $UNAME_RELEASE in
+ 	*4.0)
+@@ -265,42 +275,42 @@ case "${UNAME_MACHINE}:${UNAME_SYSTEM}:${UNAME_RELEASE}:${UNAME_VERSION}" in
+ 	ALPHA_CPU_TYPE=`/usr/sbin/psrinfo -v | sed -n -e 's/^  The alpha \(.*\) processor.*$/\1/p' | head -n 1`
+ 	case "$ALPHA_CPU_TYPE" in
+ 	    "EV4 (21064)")
+-		UNAME_MACHINE="alpha" ;;
++		UNAME_MACHINE=alpha ;;
+ 	    "EV4.5 (21064)")
+-		UNAME_MACHINE="alpha" ;;
++		UNAME_MACHINE=alpha ;;
+ 	    "LCA4 (21066/21068)")
+-		UNAME_MACHINE="alpha" ;;
++		UNAME_MACHINE=alpha ;;
+ 	    "EV5 (21164)")
+-		UNAME_MACHINE="alphaev5" ;;
++		UNAME_MACHINE=alphaev5 ;;
+ 	    "EV5.6 (21164A)")
+-		UNAME_MACHINE="alphaev56" ;;
++		UNAME_MACHINE=alphaev56 ;;
+ 	    "EV5.6 (21164PC)")
+-		UNAME_MACHINE="alphapca56" ;;
++		UNAME_MACHINE=alphapca56 ;;
+ 	    "EV5.7 (21164PC)")
+-		UNAME_MACHINE="alphapca57" ;;
++		UNAME_MACHINE=alphapca57 ;;
+ 	    "EV6 (21264)")
+-		UNAME_MACHINE="alphaev6" ;;
++		UNAME_MACHINE=alphaev6 ;;
+ 	    "EV6.7 (21264A)")
+-		UNAME_MACHINE="alphaev67" ;;
++		UNAME_MACHINE=alphaev67 ;;
+ 	    "EV6.8CB (21264C)")
+-		UNAME_MACHINE="alphaev68" ;;
++		UNAME_MACHINE=alphaev68 ;;
+ 	    "EV6.8AL (21264B)")
+-		UNAME_MACHINE="alphaev68" ;;
++		UNAME_MACHINE=alphaev68 ;;
+ 	    "EV6.8CX (21264D)")
+-		UNAME_MACHINE="alphaev68" ;;
++		UNAME_MACHINE=alphaev68 ;;
+ 	    "EV6.9A (21264/EV69A)")
+-		UNAME_MACHINE="alphaev69" ;;
++		UNAME_MACHINE=alphaev69 ;;
+ 	    "EV7 (21364)")
+-		UNAME_MACHINE="alphaev7" ;;
++		UNAME_MACHINE=alphaev7 ;;
+ 	    "EV7.9 (21364A)")
+-		UNAME_MACHINE="alphaev79" ;;
++		UNAME_MACHINE=alphaev79 ;;
+ 	esac
+ 	# A Pn.n version is a patched version.
+ 	# A Vn.n version is a released version.
+ 	# A Tn.n version is a released field test version.
+ 	# A Xn.n version is an unreleased experimental baselevel.
+ 	# 1.2 uses "1.2" for uname -r.
+-	echo ${UNAME_MACHINE}-dec-osf`echo ${UNAME_RELEASE} | sed -e 's/^[PVTX]//' | tr 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' 'abcdefghijklmnopqrstuvwxyz'`
++	echo ${UNAME_MACHINE}-dec-osf`echo ${UNAME_RELEASE} | sed -e 's/^[PVTX]//' | tr ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz`
+ 	# Reset EXIT trap before exiting to avoid spurious non-zero exit code.
+ 	exitcode=$?
+ 	trap '' 0
+@@ -373,16 +383,16 @@ case "${UNAME_MACHINE}:${UNAME_SYSTEM}:${UNAME_RELEASE}:${UNAME_VERSION}" in
+ 	exit ;;
+     i86pc:SunOS:5.*:* | i86xen:SunOS:5.*:*)
+ 	eval $set_cc_for_build
+-	SUN_ARCH="i386"
++	SUN_ARCH=i386
+ 	# If there is a compiler, see if it is configured for 64-bit objects.
+ 	# Note that the Sun cc does not turn __LP64__ into 1 like gcc does.
+ 	# This test works for both compilers.
+-	if [ "$CC_FOR_BUILD" != 'no_compiler_found' ]; then
++	if [ "$CC_FOR_BUILD" != no_compiler_found ]; then
+ 	    if (echo '#ifdef __amd64'; echo IS_64BIT_ARCH; echo '#endif') | \
+-		(CCOPTS= $CC_FOR_BUILD -E - 2>/dev/null) | \
++		(CCOPTS="" $CC_FOR_BUILD -E - 2>/dev/null) | \
+ 		grep IS_64BIT_ARCH >/dev/null
+ 	    then
+-		SUN_ARCH="x86_64"
++		SUN_ARCH=x86_64
+ 	    fi
+ 	fi
+ 	echo ${SUN_ARCH}-pc-solaris2`echo ${UNAME_RELEASE}|sed -e 's/[^.]*//'`
+@@ -407,7 +417,7 @@ case "${UNAME_MACHINE}:${UNAME_SYSTEM}:${UNAME_RELEASE}:${UNAME_VERSION}" in
+ 	exit ;;
+     sun*:*:4.2BSD:*)
+ 	UNAME_RELEASE=`(sed 1q /etc/motd | awk '{print substr($5,1,3)}') 2>/dev/null`
+-	test "x${UNAME_RELEASE}" = "x" && UNAME_RELEASE=3
++	test "x${UNAME_RELEASE}" = x && UNAME_RELEASE=3
+ 	case "`/bin/arch`" in
+ 	    sun3)
+ 		echo m68k-sun-sunos${UNAME_RELEASE}
+@@ -632,13 +642,13 @@ EOF
+ 		    sc_cpu_version=`/usr/bin/getconf SC_CPU_VERSION 2>/dev/null`
+ 		    sc_kernel_bits=`/usr/bin/getconf SC_KERNEL_BITS 2>/dev/null`
+ 		    case "${sc_cpu_version}" in
+-		      523) HP_ARCH="hppa1.0" ;; # CPU_PA_RISC1_0
+-		      528) HP_ARCH="hppa1.1" ;; # CPU_PA_RISC1_1
++		      523) HP_ARCH=hppa1.0 ;; # CPU_PA_RISC1_0
++		      528) HP_ARCH=hppa1.1 ;; # CPU_PA_RISC1_1
+ 		      532)                      # CPU_PA_RISC2_0
+ 			case "${sc_kernel_bits}" in
+-			  32) HP_ARCH="hppa2.0n" ;;
+-			  64) HP_ARCH="hppa2.0w" ;;
+-			  '') HP_ARCH="hppa2.0" ;;   # HP-UX 10.20
++			  32) HP_ARCH=hppa2.0n ;;
++			  64) HP_ARCH=hppa2.0w ;;
++			  '') HP_ARCH=hppa2.0 ;;   # HP-UX 10.20
+ 			esac ;;
+ 		    esac
+ 		fi
+@@ -677,11 +687,11 @@ EOF
+ 		    exit (0);
+ 		}
+ EOF
+-		    (CCOPTS= $CC_FOR_BUILD -o $dummy $dummy.c 2>/dev/null) && HP_ARCH=`$dummy`
++		    (CCOPTS="" $CC_FOR_BUILD -o $dummy $dummy.c 2>/dev/null) && HP_ARCH=`$dummy`
+ 		    test -z "$HP_ARCH" && HP_ARCH=hppa
+ 		fi ;;
+ 	esac
+-	if [ ${HP_ARCH} = "hppa2.0w" ]
++	if [ ${HP_ARCH} = hppa2.0w ]
+ 	then
+ 	    eval $set_cc_for_build
+ 
+@@ -694,12 +704,12 @@ EOF
+ 	    # $ CC_FOR_BUILD="cc +DA2.0w" ./config.guess
+ 	    # => hppa64-hp-hpux11.23
+ 
+-	    if echo __LP64__ | (CCOPTS= $CC_FOR_BUILD -E - 2>/dev/null) |
++	    if echo __LP64__ | (CCOPTS="" $CC_FOR_BUILD -E - 2>/dev/null) |
+ 		grep -q __LP64__
+ 	    then
+-		HP_ARCH="hppa2.0w"
++		HP_ARCH=hppa2.0w
+ 	    else
+-		HP_ARCH="hppa64"
++		HP_ARCH=hppa64
+ 	    fi
+ 	fi
+ 	echo ${HP_ARCH}-hp-hpux${HPUX_REV}
+@@ -804,14 +814,14 @@ EOF
+ 	echo craynv-cray-unicosmp${UNAME_RELEASE} | sed -e 's/\.[^.]*$/.X/'
+ 	exit ;;
+     F30[01]:UNIX_System_V:*:* | F700:UNIX_System_V:*:*)
+-	FUJITSU_PROC=`uname -m | tr 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' 'abcdefghijklmnopqrstuvwxyz'`
+-	FUJITSU_SYS=`uname -p | tr 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' 'abcdefghijklmnopqrstuvwxyz' | sed -e 's/\///'`
++	FUJITSU_PROC=`uname -m | tr ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz`
++	FUJITSU_SYS=`uname -p | tr ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz | sed -e 's/\///'`
+ 	FUJITSU_REL=`echo ${UNAME_RELEASE} | sed -e 's/ /_/'`
+ 	echo "${FUJITSU_PROC}-fujitsu-${FUJITSU_SYS}${FUJITSU_REL}"
+ 	exit ;;
+     5000:UNIX_System_V:4.*:*)
+-	FUJITSU_SYS=`uname -p | tr 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' 'abcdefghijklmnopqrstuvwxyz' | sed -e 's/\///'`
+-	FUJITSU_REL=`echo ${UNAME_RELEASE} | tr 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' 'abcdefghijklmnopqrstuvwxyz' | sed -e 's/ /_/'`
++	FUJITSU_SYS=`uname -p | tr ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz | sed -e 's/\///'`
++	FUJITSU_REL=`echo ${UNAME_RELEASE} | tr ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz | sed -e 's/ /_/'`
+ 	echo "sparc-fujitsu-${FUJITSU_SYS}${FUJITSU_REL}"
+ 	exit ;;
+     i*86:BSD/386:*:* | i*86:BSD/OS:*:* | *:Ascend\ Embedded/OS:*:*)
+@@ -893,7 +903,7 @@ EOF
+ 	exit ;;
+     *:GNU/*:*:*)
+ 	# other systems with GNU libc and userland
+-	echo ${UNAME_MACHINE}-unknown-`echo ${UNAME_SYSTEM} | sed 's,^[^/]*/,,' | tr '[A-Z]' '[a-z]'``echo ${UNAME_RELEASE}|sed -e 's/[-(].*//'`-${LIBC}
++	echo ${UNAME_MACHINE}-unknown-`echo ${UNAME_SYSTEM} | sed 's,^[^/]*/,,' | tr "[:upper:]" "[:lower:]"``echo ${UNAME_RELEASE}|sed -e 's/[-(].*//'`-${LIBC}
+ 	exit ;;
+     i*86:Minix:*:*)
+ 	echo ${UNAME_MACHINE}-pc-minix
+@@ -916,7 +926,7 @@ EOF
+ 	  EV68*) UNAME_MACHINE=alphaev68 ;;
+ 	esac
+ 	objdump --private-headers /bin/sh | grep -q ld.so.1
+-	if test "$?" = 0 ; then LIBC="gnulibc1" ; fi
++	if test "$?" = 0 ; then LIBC=gnulibc1 ; fi
+ 	echo ${UNAME_MACHINE}-unknown-linux-${LIBC}
+ 	exit ;;
+     arc:Linux:*:* | arceb:Linux:*:*)
+@@ -962,6 +972,9 @@ EOF
+     ia64:Linux:*:*)
+ 	echo ${UNAME_MACHINE}-unknown-linux-${LIBC}
+ 	exit ;;
++    k1om:Linux:*:*)
++	echo ${UNAME_MACHINE}-unknown-linux-${LIBC}
++	exit ;;
+     m32r*:Linux:*:*)
+ 	echo ${UNAME_MACHINE}-unknown-linux-${LIBC}
+ 	exit ;;
+@@ -1019,6 +1032,9 @@ EOF
+     ppcle:Linux:*:*)
+ 	echo powerpcle-unknown-linux-${LIBC}
+ 	exit ;;
++    riscv32:Linux:*:* | riscv64:Linux:*:*)
++	echo ${UNAME_MACHINE}-unknown-linux-${LIBC}
++	exit ;;
+     s390:Linux:*:* | s390x:Linux:*:*)
+ 	echo ${UNAME_MACHINE}-ibm-linux-${LIBC}
+ 	exit ;;
+@@ -1038,7 +1054,7 @@ EOF
+ 	echo ${UNAME_MACHINE}-dec-linux-${LIBC}
+ 	exit ;;
+     x86_64:Linux:*:*)
+-	echo ${UNAME_MACHINE}-unknown-linux-${LIBC}
++	echo ${UNAME_MACHINE}-pc-linux-${LIBC}
+ 	exit ;;
+     xtensa*:Linux:*:*)
+ 	echo ${UNAME_MACHINE}-unknown-linux-${LIBC}
+@@ -1117,7 +1133,7 @@ EOF
+ 	# uname -m prints for DJGPP always 'pc', but it prints nothing about
+ 	# the processor, so we play safe by assuming i586.
+ 	# Note: whatever this is, it MUST be the same as what config.sub
+-	# prints for the "djgpp" host, or else GDB configury will decide that
++	# prints for the "djgpp" host, or else GDB configure will decide that
+ 	# this is a cross-build.
+ 	echo i586-pc-msdosdjgpp
+ 	exit ;;
+@@ -1266,6 +1282,9 @@ EOF
+     SX-8R:SUPER-UX:*:*)
+ 	echo sx8r-nec-superux${UNAME_RELEASE}
+ 	exit ;;
++    SX-ACE:SUPER-UX:*:*)
++	echo sxace-nec-superux${UNAME_RELEASE}
++	exit ;;
+     Power*:Rhapsody:*:*)
+ 	echo powerpc-apple-rhapsody${UNAME_RELEASE}
+ 	exit ;;
+@@ -1279,9 +1298,9 @@ EOF
+ 	    UNAME_PROCESSOR=powerpc
+ 	fi
+ 	if test `echo "$UNAME_RELEASE" | sed -e 's/\..*//'` -le 10 ; then
+-	    if [ "$CC_FOR_BUILD" != 'no_compiler_found' ]; then
++	    if [ "$CC_FOR_BUILD" != no_compiler_found ]; then
+ 		if (echo '#ifdef __LP64__'; echo IS_64BIT_ARCH; echo '#endif') | \
+-		    (CCOPTS= $CC_FOR_BUILD -E - 2>/dev/null) | \
++		    (CCOPTS="" $CC_FOR_BUILD -E - 2>/dev/null) | \
+ 		    grep IS_64BIT_ARCH >/dev/null
+ 		then
+ 		    case $UNAME_PROCESSOR in
+@@ -1303,7 +1322,7 @@ EOF
+ 	exit ;;
+     *:procnto*:*:* | *:QNX:[0123456789]*:*)
+ 	UNAME_PROCESSOR=`uname -p`
+-	if test "$UNAME_PROCESSOR" = "x86"; then
++	if test "$UNAME_PROCESSOR" = x86; then
+ 		UNAME_PROCESSOR=i386
+ 		UNAME_MACHINE=pc
+ 	fi
+@@ -1334,7 +1353,7 @@ EOF
+ 	# "uname -m" is not consistent, so use $cputype instead. 386
+ 	# is converted to i386 for consistency with other x86
+ 	# operating systems.
+-	if test "$cputype" = "386"; then
++	if test "$cputype" = 386; then
+ 	    UNAME_MACHINE=i386
+ 	else
+ 	    UNAME_MACHINE="$cputype"
+@@ -1376,7 +1395,7 @@ EOF
+ 	echo i386-pc-xenix
+ 	exit ;;
+     i*86:skyos:*:*)
+-	echo ${UNAME_MACHINE}-pc-skyos`echo ${UNAME_RELEASE}` | sed -e 's/ .*$//'
++	echo ${UNAME_MACHINE}-pc-skyos`echo ${UNAME_RELEASE} | sed -e 's/ .*$//'`
+ 	exit ;;
+     i*86:rdos:*:*)
+ 	echo ${UNAME_MACHINE}-pc-rdos
+@@ -1387,23 +1406,25 @@ EOF
+     x86_64:VMkernel:*:*)
+ 	echo ${UNAME_MACHINE}-unknown-esx
+ 	exit ;;
++    amd64:Isilon\ OneFS:*:*)
++	echo x86_64-unknown-onefs
++	exit ;;
+ esac
+ 
+ cat >&2 <<EOF
+ $0: unable to guess system type
+ 
+-This script, last modified $timestamp, has failed to recognize
+-the operating system you are using. It is advised that you
+-download the most up to date version of the config scripts from
++This script (version $timestamp), has failed to recognize the
++operating system you are using. If your script is old, overwrite
++config.guess and config.sub with the latest versions from:
+ 
+-  http://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess;hb=HEAD
++  http://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.guess
+ and
+-  http://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.sub;hb=HEAD
++  http://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.sub
+ 
+-If the version you run ($0) is already up to date, please
+-send the following data and any information you think might be
+-pertinent to <config-patches@gnu.org> in order to provide the needed
+-information to handle your system.
++If $0 has already been updated, send the following data and any
++information you think might be pertinent to config-patches@gnu.org to
++provide the necessary information to handle your system.
+ 
+ config.guess timestamp = $timestamp
+ 
+diff --git a/deps/libev/config.sub b/deps/libev/config.sub
+index 8f1229c..6f8facd 100755
+--- a/deps/libev/config.sub
++++ b/deps/libev/config.sub
+@@ -1,8 +1,8 @@
+-#! /bin/sh
++#!/data/data/com.termux/files/usr/bin/sh
+ # Configuration validation subroutine script.
+-#   Copyright 1992-2015 Free Software Foundation, Inc.
++#   Copyright 1992-2016 Free Software Foundation, Inc.
+ 
+-timestamp='2015-03-08'
++timestamp='2016-09-05'
+ 
+ # This file is free software; you can redistribute it and/or modify it
+ # under the terms of the GNU General Public License as published by
+@@ -33,7 +33,7 @@ timestamp='2015-03-08'
+ # Otherwise, we print the canonical config type on stdout and succeed.
+ 
+ # You can get the latest version of this script from:
+-# http://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.sub;hb=HEAD
++# http://git.savannah.gnu.org/gitweb/?p=config.git;a=blob_plain;f=config.sub
+ 
+ # This file is supposed to be the same for all GNU packages
+ # and recognize all the CPU types, system types and aliases
+@@ -53,8 +53,7 @@ timestamp='2015-03-08'
+ me=`echo "$0" | sed -e 's,.*/,,'`
+ 
+ usage="\
+-Usage: $0 [OPTION] CPU-MFR-OPSYS
+-       $0 [OPTION] ALIAS
++Usage: $0 [OPTION] CPU-MFR-OPSYS or ALIAS
+ 
+ Canonicalize a configuration name.
+ 
+@@ -68,7 +67,7 @@ Report bugs and patches to <config-patches@gnu.org>."
+ version="\
+ GNU config.sub ($timestamp)
+ 
+-Copyright 1992-2015 Free Software Foundation, Inc.
++Copyright 1992-2016 Free Software Foundation, Inc.
+ 
+ This is free software; see the source for copying conditions.  There is NO
+ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+@@ -118,7 +117,7 @@ case $maybe_os in
+   nto-qnx* | linux-gnu* | linux-android* | linux-dietlibc | linux-newlib* | \
+   linux-musl* | linux-uclibc* | uclinux-uclibc* | uclinux-gnu* | kfreebsd*-gnu* | \
+   knetbsd*-gnu* | netbsd*-gnu* | netbsd*-eabi* | \
+-  kopensolaris*-gnu* | \
++  kopensolaris*-gnu* | cloudabi*-eabi* | \
+   storm-chaos* | os2-emx* | rtmk-nova*)
+     os=-$maybe_os
+     basic_machine=`echo $1 | sed 's/^\(.*\)-\([^-]*-[^-]*\)$/\1/'`
+@@ -255,6 +254,7 @@ case $basic_machine in
+ 	| arc | arceb \
+ 	| arm | arm[bl]e | arme[lb] | armv[2-8] | armv[3-8][lb] | armv7[arm] \
+ 	| avr | avr32 \
++	| ba \
+ 	| be32 | be64 \
+ 	| bfin \
+ 	| c4x | c8051 | clipper \
+@@ -305,7 +305,7 @@ case $basic_machine in
+ 	| riscv32 | riscv64 \
+ 	| rl78 | rx \
+ 	| score \
+-	| sh | sh[1234] | sh[24]a | sh[24]aeb | sh[23]e | sh[34]eb | sheb | shbe | shle | sh[1234]le | sh3ele \
++	| sh | sh[1234] | sh[24]a | sh[24]aeb | sh[23]e | sh[234]eb | sheb | shbe | shle | sh[1234]le | sh3ele \
+ 	| sh64 | sh64le \
+ 	| sparc | sparc64 | sparc64b | sparc64v | sparc86x | sparclet | sparclite \
+ 	| sparcv8 | sparcv9 | sparcv9b | sparcv9v \
+@@ -376,6 +376,7 @@ case $basic_machine in
+ 	| alphapca5[67]-* | alpha64pca5[67]-* | arc-* | arceb-* \
+ 	| arm-*  | armbe-* | armle-* | armeb-* | armv*-* \
+ 	| avr-* | avr32-* \
++	| ba-* \
+ 	| be32-* | be64-* \
+ 	| bfin-* | bs2000-* \
+ 	| c[123]* | c30-* | [cjt]90-* | c4x-* \
+@@ -428,12 +429,13 @@ case $basic_machine in
+ 	| pdp10-* | pdp11-* | pj-* | pjl-* | pn-* | power-* \
+ 	| powerpc-* | powerpc64-* | powerpc64le-* | powerpcle-* \
+ 	| pyramid-* \
++	| riscv32-* | riscv64-* \
+ 	| rl78-* | romp-* | rs6000-* | rx-* \
+ 	| sh-* | sh[1234]-* | sh[24]a-* | sh[24]aeb-* | sh[23]e-* | sh[34]eb-* | sheb-* | shbe-* \
+ 	| shle-* | sh[1234]le-* | sh3ele-* | sh64-* | sh64le-* \
+ 	| sparc-* | sparc64-* | sparc64b-* | sparc64v-* | sparc86x-* | sparclet-* \
+ 	| sparclite-* \
+-	| sparcv8-* | sparcv9-* | sparcv9b-* | sparcv9v-* | sv1-* | sx?-* \
++	| sparcv8-* | sparcv9-* | sparcv9b-* | sparcv9v-* | sv1-* | sx*-* \
+ 	| tahoe-* \
+ 	| tic30-* | tic4x-* | tic54x-* | tic55x-* | tic6x-* | tic80-* \
+ 	| tile*-* \
+@@ -518,7 +520,7 @@ case $basic_machine in
+ 		basic_machine=i386-pc
+ 		os=-aros
+ 		;;
+-        asmjs)
++	asmjs)
+ 		basic_machine=asmjs-unknown
+ 		;;
+ 	aux)
+@@ -641,6 +643,14 @@ case $basic_machine in
+ 		basic_machine=m68k-bull
+ 		os=-sysv3
+ 		;;
++	e500v[12])
++		basic_machine=powerpc-unknown
++		os=$os"spe"
++		;;
++	e500v[12]-*)
++		basic_machine=powerpc-`echo $basic_machine | sed 's/^[^-]*-//'`
++		os=$os"spe"
++		;;
+ 	ebmon29k)
+ 		basic_machine=a29k-amd
+ 		os=-ebmon
+@@ -1020,7 +1030,7 @@ case $basic_machine in
+ 	ppc-* | ppcbe-*)
+ 		basic_machine=powerpc-`echo $basic_machine | sed 's/^[^-]*-//'`
+ 		;;
+-	ppcle | powerpclittle | ppc-le | powerpc-little)
++	ppcle | powerpclittle)
+ 		basic_machine=powerpcle-unknown
+ 		;;
+ 	ppcle-* | powerpclittle-*)
+@@ -1030,7 +1040,7 @@ case $basic_machine in
+ 		;;
+ 	ppc64-*) basic_machine=powerpc64-`echo $basic_machine | sed 's/^[^-]*-//'`
+ 		;;
+-	ppc64le | powerpc64little | ppc64-le | powerpc64-little)
++	ppc64le | powerpc64little)
+ 		basic_machine=powerpc64le-unknown
+ 		;;
+ 	ppc64le-* | powerpc64little-*)
+@@ -1376,18 +1386,18 @@ case $os in
+ 	      | -hpux* | -unos* | -osf* | -luna* | -dgux* | -auroraux* | -solaris* \
+ 	      | -sym* | -kopensolaris* | -plan9* \
+ 	      | -amigaos* | -amigados* | -msdos* | -newsos* | -unicos* | -aof* \
+-	      | -aos* | -aros* | -cloudabi* \
++	      | -aos* | -aros* | -cloudabi* | -sortix* \
+ 	      | -nindy* | -vxsim* | -vxworks* | -ebmon* | -hms* | -mvs* \
+ 	      | -clix* | -riscos* | -uniplus* | -iris* | -rtu* | -xenix* \
+ 	      | -hiux* | -386bsd* | -knetbsd* | -mirbsd* | -netbsd* \
+-	      | -bitrig* | -openbsd* | -solidbsd* \
++	      | -bitrig* | -openbsd* | -solidbsd* | -libertybsd* \
+ 	      | -ekkobsd* | -kfreebsd* | -freebsd* | -riscix* | -lynxos* \
+ 	      | -bosx* | -nextstep* | -cxux* | -aout* | -elf* | -oabi* \
+ 	      | -ptx* | -coff* | -ecoff* | -winnt* | -domain* | -vsta* \
+ 	      | -udi* | -eabi* | -lites* | -ieee* | -go32* | -aux* \
+ 	      | -chorusos* | -chorusrdb* | -cegcc* \
+ 	      | -cygwin* | -msys* | -pe* | -psos* | -moss* | -proelf* | -rtems* \
+-	      | -mingw32* | -mingw64* | -linux-gnu* | -linux-android* \
++	      | -midipix* | -mingw32* | -mingw64* | -linux-gnu* | -linux-android* \
+ 	      | -linux-newlib* | -linux-musl* | -linux-uclibc* \
+ 	      | -uxpv* | -beos* | -mpeix* | -udk* | -moxiebox* \
+ 	      | -interix* | -uwin* | -mks* | -rhapsody* | -darwin* | -opened* \
+@@ -1396,7 +1406,8 @@ case $os in
+ 	      | -os2* | -vos* | -palmos* | -uclinux* | -nucleus* \
+ 	      | -morphos* | -superux* | -rtmk* | -rtmk-nova* | -windiss* \
+ 	      | -powermax* | -dnix* | -nx6 | -nx7 | -sei* | -dragonfly* \
+-	      | -skyos* | -haiku* | -rdos* | -toppers* | -drops* | -es* | -tirtos*)
++	      | -skyos* | -haiku* | -rdos* | -toppers* | -drops* | -es* \
++	      | -onefs* | -tirtos* | -phoenix*)
+ 	# Remember, each alternative MUST END IN *, to match a version number.
+ 		;;
+ 	-qnx*)
+@@ -1528,6 +1539,8 @@ case $os in
+ 		;;
+ 	-nacl*)
+ 		;;
++	-ios)
++		;;
+ 	-none)
+ 		;;
+ 	*)
+diff --git a/deps/libev/configure b/deps/libev/configure
+index 743817e..9a9bab1 100755
+--- a/deps/libev/configure
++++ b/deps/libev/configure
+@@ -1,4 +1,4 @@
+-#! /bin/sh
++#!/data/data/com.termux/files/usr/bin/sh
+ # Guess values for system-dependent variables and create Makefiles.
+ # Generated by GNU Autoconf 2.69.
+ #
+@@ -281,7 +281,7 @@ $0: the script under such a shell if you do have one."
+ fi
+ fi
+ fi
+-SHELL=${CONFIG_SHELL-/bin/sh}
++SHELL=${CONFIG_SHELL-/data/data/com.termux/files/usr/bin/sh}
+ export SHELL
+ # Unset more variables known to interfere with behavior of common tools.
+ CLICOLOR_FORCE= GREP_OPTIONS=
+@@ -561,7 +561,7 @@ as_tr_cpp="eval sed 'y%*$as_cr_letters%P$as_cr_LETTERS%;s%[^_$as_cr_alnum]%_%g'"
+ # Sed expression to map a string onto a valid variable name.
+ as_tr_sh="eval sed 'y%*+%pp%;s%[^_$as_cr_alnum]%_%g'"
+ 
+-SHELL=${CONFIG_SHELL-/bin/sh}
++SHELL=${CONFIG_SHELL-/data/data/com.termux/files/usr/bin/sh}
+ 
+ 
+ test -n "$DJDIR" || exec 7<&0 </dev/null
+@@ -4794,7 +4794,7 @@ else
+       for i in 1 2 3 4 5 6 7 8 ; do
+         teststring=$teststring$teststring
+       done
+-      SHELL=${SHELL-${CONFIG_SHELL-/bin/sh}}
++      SHELL=${SHELL-${CONFIG_SHELL-/data/data/com.termux/files/usr/bin/sh}}
+       # If test is not a shell built-in, we'll probably end up computing a
+       # maximum length that is only half of the actual maximum length, but
+       # we can't tell.
+diff --git a/deps/libev/depcomp b/deps/libev/depcomp
+index fc98710..a55f29a 100755
+--- a/deps/libev/depcomp
++++ b/deps/libev/depcomp
+@@ -1,4 +1,4 @@
+-#! /bin/sh
++#!/data/data/com.termux/files/usr/bin/sh
+ # depcomp - compile a program generating dependencies as side-effects
+ 
+ scriptversion=2013-05-30.07; # UTC
+diff --git a/deps/libev/install-sh b/deps/libev/install-sh
+index 59990a1..50efb45 100755
+--- a/deps/libev/install-sh
++++ b/deps/libev/install-sh
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/data/data/com.termux/files/usr/bin/sh
+ # install - install a program, script, or datafile
+ 
+ scriptversion=2014-09-12.12; # UTC
+diff --git a/deps/libev/missing b/deps/libev/missing
+index f62bbae..fc1f61f 100755
+--- a/deps/libev/missing
++++ b/deps/libev/missing
+@@ -1,4 +1,4 @@
+-#! /bin/sh
++#!/data/data/com.termux/files/usr/bin/sh
+ # Common wrapper for a few potentially missing GNU programs.
+ 
+ scriptversion=2013-10-28.13; # UTC
+diff --git a/doc/generate_rst.py b/doc/generate_rst.py
+index 3fb7d77..1f81d12 100755
+--- a/doc/generate_rst.py
++++ b/doc/generate_rst.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/data/data/com.termux/files/usr/bin/env python
+ from __future__ import print_function
+ import os
+ import glob
+diff --git a/examples/concurrent_download.py b/examples/concurrent_download.py
+index 1011767..20c8db6 100755
+--- a/examples/concurrent_download.py
++++ b/examples/concurrent_download.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/python
++#!/data/data/com.termux/files/usr/bin/python
+ # Copyright (c) 2009 Denis Bilenko. See LICENSE for details.
+ 
+ """Spawn multiple workers and wait for them to complete"""
+diff --git a/examples/dns_mass_resolve.py b/examples/dns_mass_resolve.py
+index 3e8d80b..c2c9a8c 100755
+--- a/examples/dns_mass_resolve.py
++++ b/examples/dns_mass_resolve.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/python
++#!/data/data/com.termux/files/usr/bin/python
+ """Resolve hostnames concurrently, exit after 2 seconds.
+ 
+ Under the hood, this might use an asynchronous resolver based on
+diff --git a/examples/echoserver.py b/examples/echoserver.py
+index 6cb99ee..0fec8e9 100755
+--- a/examples/echoserver.py
++++ b/examples/echoserver.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/data/data/com.termux/files/usr/bin/env python
+ """Simple server that listens on port 16000 and echos back every input to the client.
+ 
+ Connect to it with:
+diff --git a/examples/processes.py b/examples/processes.py
+index a7a9471..fd7070f 100755
+--- a/examples/processes.py
++++ b/examples/processes.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/data/data/com.termux/files/usr/bin/env python
+ from __future__ import print_function
+ import gevent
+ from gevent import subprocess
+diff --git a/examples/webchat/application.py b/examples/webchat/application.py
+index 328e4cd..abb018d 100755
+--- a/examples/webchat/application.py
++++ b/examples/webchat/application.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/python
++#!/data/data/com.termux/files/usr/bin/python
+ from gevent import monkey; monkey.patch_all()
+ import os
+ import traceback
+diff --git a/examples/webchat/manage.py b/examples/webchat/manage.py
+index bcf991f..198297c 100755
+--- a/examples/webchat/manage.py
++++ b/examples/webchat/manage.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/python
++#!/data/data/com.termux/files/usr/bin/python
+ from django.core.management import execute_manager
+ try:
+     import settings  # Assumed to be in the same directory.
+diff --git a/examples/webchat/run_standalone.py b/examples/webchat/run_standalone.py
+index ea73fc9..25cd5d3 100755
+--- a/examples/webchat/run_standalone.py
++++ b/examples/webchat/run_standalone.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/python
++#!/data/data/com.termux/files/usr/bin/python
+ from __future__ import print_function
+ from gevent.wsgi import WSGIServer
+ from application import application
+diff --git a/examples/webchat/run_uwsgi b/examples/webchat/run_uwsgi
+index 39a3e1e..280e035 100755
+--- a/examples/webchat/run_uwsgi
++++ b/examples/webchat/run_uwsgi
+@@ -1,3 +1,3 @@
+-#!/bin/sh
++#!/data/data/com.termux/files/usr/bin/sh
+ # see http://projects.unbit.it/uwsgi and http://projects.unbit.it/uwsgi/wiki/Gevent
+ exec uwsgi --loop gevent --http-socket :8000 --module application --async 1000
+diff --git a/examples/webproxy.py b/examples/webproxy.py
+index 833a84e..65887c0 100755
+--- a/examples/webproxy.py
++++ b/examples/webproxy.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/data/data/com.termux/files/usr/bin/env python
+ """A web application that retrieves other websites for you.
+ 
+ To start serving the application on port 8088, type
+diff --git a/examples/webpy.py b/examples/webpy.py
+index bf1564f..d8f17b7 100755
+--- a/examples/webpy.py
++++ b/examples/webpy.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/python
++#!/data/data/com.termux/files/usr/bin/python
+ """A web.py application powered by gevent"""
+ 
+ from __future__ import print_function
+diff --git a/examples/wsgiserver.py b/examples/wsgiserver.py
+index b803ea7..293069b 100755
+--- a/examples/wsgiserver.py
++++ b/examples/wsgiserver.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/python
++#!/data/data/com.termux/files/usr/bin/python
+ """WSGI server example"""
+ from __future__ import print_function
+ from gevent.pywsgi import WSGIServer
+diff --git a/examples/wsgiserver_ssl.py b/examples/wsgiserver_ssl.py
+index 1e9f947..f078c61 100755
+--- a/examples/wsgiserver_ssl.py
++++ b/examples/wsgiserver_ssl.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/python
++#!/data/data/com.termux/files/usr/bin/python
+ """Secure WSGI server example based on gevent.pywsgi"""
+ 
+ from __future__ import print_function
+diff --git a/scripts/install.sh b/scripts/install.sh
+index 3efb374..4eb7f96 100755
+--- a/scripts/install.sh
++++ b/scripts/install.sh
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env bash
++#!/data/data/com.termux/files/usr/bin/env bash
+ # GEVENT: Taken from https://raw.githubusercontent.com/DRMacIver/hypothesis/master/scripts/install.sh
+ 
+ # Special license: Take literally anything you want out of this file. I don't
+diff --git a/scripts/releases/geventrel.sh b/scripts/releases/geventrel.sh
+index ed90073..896557d 100755
+--- a/scripts/releases/geventrel.sh
++++ b/scripts/releases/geventrel.sh
+@@ -1,4 +1,4 @@
+-#!/opt/local/bin/bash
++#!/data/data/com.termux/files/usr/bin/bash
+ #
+ # Quick hack script to build a single gevent release in a virtual env. Takes one
+ # argument, the path to python to use.
+diff --git a/scripts/releases/geventreleases.sh b/scripts/releases/geventreleases.sh
+index 81c8b01..8c19bd0 100755
+--- a/scripts/releases/geventreleases.sh
++++ b/scripts/releases/geventreleases.sh
+@@ -1,4 +1,4 @@
+-#!/opt/local/bin/bash
++#!/data/data/com.termux/files/usr/bin/bash
+ 
+ # Quick hack script to create many gevent releases.
+ # Contains hardcoded paths. Probably only works on my (JAM) machine
+diff --git a/scripts/releases/make-manylinux b/scripts/releases/make-manylinux
+index d011feb..300bb85 100755
+--- a/scripts/releases/make-manylinux
++++ b/scripts/releases/make-manylinux
+@@ -1,4 +1,4 @@
+-#!/bin/bash
++#!/data/data/com.termux/files/usr/bin/bash
+ # Initially based on a snippet from the greenlet project.
+ # This needs to be run from the root of the project.
+ set -e
+diff --git a/setup.py b/setup.py
+index af56919..a4bedc9 100755
+--- a/setup.py
++++ b/setup.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/data/data/com.termux/files/usr/bin/env python
+ """gevent build & installation script"""
+ from __future__ import print_function
+ import sys
+diff --git a/src/gevent/subprocess.py b/src/gevent/subprocess.py
+index 27fa3b6..e81173e 100644
+--- a/src/gevent/subprocess.py
++++ b/src/gevent/subprocess.py
+@@ -1131,7 +1131,7 @@ class Popen(object):
+                 args = list(args)
+ 
+             if shell:
+-                args = ["/bin/sh", "-c"] + args
++                args = ["/data/data/com.termux/files/usr/bin/sh", "-c"] + args
+                 if executable:
+                     args[0] = executable
+ 
+diff --git a/src/greentest/2.7/test_subprocess.py b/src/greentest/2.7/test_subprocess.py
+index 06de108..fe88875 100644
+--- a/src/greentest/2.7/test_subprocess.py
++++ b/src/greentest/2.7/test_subprocess.py
+@@ -849,7 +849,7 @@ class POSIXProcessTestCase(BaseTestCase):
+     def test_args_string(self):
+         # args is a string
+         f, fname = tempfile.mkstemp()
+-        os.write(f, "#!/bin/sh\n")
++        os.write(f, "#!/data/data/com.termux/files/usr/bin/sh\n")
+         os.write(f, "exec '%s' -c 'import sys; sys.exit(47)'\n" %
+                     sys.executable)
+         os.close(f)
+@@ -893,7 +893,7 @@ class POSIXProcessTestCase(BaseTestCase):
+     def test_call_string(self):
+         # call() function with string argument on UNIX
+         f, fname = tempfile.mkstemp()
+-        os.write(f, "#!/bin/sh\n")
++        os.write(f, "#!/data/data/com.termux/files/usr/bin/sh\n")
+         os.write(f, "exec '%s' -c 'import sys; sys.exit(47)'\n" %
+                     sys.executable)
+         os.close(f)
+@@ -905,14 +905,14 @@ class POSIXProcessTestCase(BaseTestCase):
+     def test_specific_shell(self):
+         # Issue #9265: Incorrect name passed as arg[0].
+         shells = []
+-        for prefix in ['/bin', '/usr/bin/', '/usr/local/bin']:
++        for prefix in ['/data/data/com.termux/files/usr/bin', '/data/data/com.termux/files/usr/local/bin']:
+             for name in ['bash', 'ksh']:
+                 sh = os.path.join(prefix, name)
+                 if os.path.isfile(sh):
+                     shells.append(sh)
+         if not shells: # Will probably work for any shell but csh.
+             self.skipTest("bash or ksh required for this test")
+-        sh = '/bin/sh'
++        sh = '/data/data/com.termux/files/usr/bin/sh'
+         if os.path.isfile(sh) and not os.path.islink(sh):
+             # Test will fail if /bin/sh is a symlink to csh.
+             shells.append(sh)
+diff --git a/src/greentest/2.7pypy/test_subprocess.py b/src/greentest/2.7pypy/test_subprocess.py
+index 1e38e60..9699d65 100644
+--- a/src/greentest/2.7pypy/test_subprocess.py
++++ b/src/greentest/2.7pypy/test_subprocess.py
+@@ -862,7 +862,7 @@ class POSIXProcessTestCase(BaseTestCase):
+     def test_args_string(self):
+         # args is a string
+         f, fname = mkstemp()
+-        os.write(f, "#!/bin/sh\n")
++        os.write(f, "#!/data/data/com.termux/files/usr/bin/sh\n")
+         os.write(f, "exec '%s' -c 'import sys; sys.exit(47)'\n" %
+                     sys.executable)
+         os.close(f)
+@@ -906,7 +906,7 @@ class POSIXProcessTestCase(BaseTestCase):
+     def test_call_string(self):
+         # call() function with string argument on UNIX
+         f, fname = mkstemp()
+-        os.write(f, "#!/bin/sh\n")
++        os.write(f, "#!/data/data/com.termux/files/usr/bin/sh\n")
+         os.write(f, "exec '%s' -c 'import sys; sys.exit(47)'\n" %
+                     sys.executable)
+         os.close(f)
+@@ -918,14 +918,14 @@ class POSIXProcessTestCase(BaseTestCase):
+     def test_specific_shell(self):
+         # Issue #9265: Incorrect name passed as arg[0].
+         shells = []
+-        for prefix in ['/bin', '/usr/bin/', '/usr/local/bin']:
++        for prefix in ['/data/data/com.termux/files/usr/bin', '/data/data/com.termux/files/usr/local/bin']:
+             for name in ['bash', 'ksh']:
+                 sh = os.path.join(prefix, name)
+                 if os.path.isfile(sh):
+                     shells.append(sh)
+         if not shells: # Will probably work for any shell but csh.
+             self.skipTest("bash or ksh required for this test")
+-        sh = '/bin/sh'
++        sh = '/data/data/com.termux/files/usr/bin/sh'
+         if os.path.isfile(sh) and not os.path.islink(sh):
+             # Test will fail if /bin/sh is a symlink to csh.
+             shells.append(sh)
+diff --git a/src/greentest/3.3pypy/test_subprocess.py b/src/greentest/3.3pypy/test_subprocess.py
+index b60b76f..35d3a9b 100644
+--- a/src/greentest/3.3pypy/test_subprocess.py
++++ b/src/greentest/3.3pypy/test_subprocess.py
+@@ -1357,7 +1357,7 @@ class POSIXProcessTestCase(BaseTestCase):
+         fd, fname = mkstemp()
+         # reopen in text mode
+         with open(fd, "w", errors="surrogateescape") as fobj:
+-            fobj.write("#!/bin/sh\n")
++            fobj.write("#!/data/data/com.termux/files/usr/bin/sh\n")
+             fobj.write("exec '%s' -c 'import sys; sys.exit(47)'\n" %
+                        sys.executable)
+         os.chmod(fname, 0o700)
+@@ -1402,7 +1402,7 @@ class POSIXProcessTestCase(BaseTestCase):
+         fd, fname = mkstemp()
+         # reopen in text mode
+         with open(fd, "w", errors="surrogateescape") as fobj:
+-            fobj.write("#!/bin/sh\n")
++            fobj.write("#!/data/data/com.termux/files/usr/bin/sh\n")
+             fobj.write("exec '%s' -c 'import sys; sys.exit(47)'\n" %
+                        sys.executable)
+         os.chmod(fname, 0o700)
+@@ -1413,14 +1413,14 @@ class POSIXProcessTestCase(BaseTestCase):
+     def test_specific_shell(self):
+         # Issue #9265: Incorrect name passed as arg[0].
+         shells = []
+-        for prefix in ['/bin', '/usr/bin/', '/usr/local/bin']:
++        for prefix in ['/data/data/com.termux/files/usr/bin', '/data/data/com.termux/files/usr/local/bin']:
+             for name in ['bash', 'ksh']:
+                 sh = os.path.join(prefix, name)
+                 if os.path.isfile(sh):
+                     shells.append(sh)
+         if not shells: # Will probably work for any shell but csh.
+             self.skipTest("bash or ksh required for this test")
+-        sh = '/bin/sh'
++        sh = '/data/data/com.termux/files/usr/bin/sh'
+         if os.path.isfile(sh) and not os.path.islink(sh):
+             # Test will fail if /bin/sh is a symlink to csh.
+             shells.append(sh)
+diff --git a/src/greentest/3.4/test_subprocess.py b/src/greentest/3.4/test_subprocess.py
+index 34602fe..8db21d8 100644
+--- a/src/greentest/3.4/test_subprocess.py
++++ b/src/greentest/3.4/test_subprocess.py
+@@ -1434,7 +1434,7 @@ class POSIXProcessTestCase(BaseTestCase):
+         fd, fname = mkstemp()
+         # reopen in text mode
+         with open(fd, "w", errors="surrogateescape") as fobj:
+-            fobj.write("#!/bin/sh\n")
++            fobj.write("#!/data/data/com.termux/files/usr/bin/sh\n")
+             fobj.write("exec '%s' -c 'import sys; sys.exit(47)'\n" %
+                        sys.executable)
+         os.chmod(fname, 0o700)
+@@ -1479,7 +1479,7 @@ class POSIXProcessTestCase(BaseTestCase):
+         fd, fname = mkstemp()
+         # reopen in text mode
+         with open(fd, "w", errors="surrogateescape") as fobj:
+-            fobj.write("#!/bin/sh\n")
++            fobj.write("#!/data/data/com.termux/files/usr/bin/sh\n")
+             fobj.write("exec '%s' -c 'import sys; sys.exit(47)'\n" %
+                        sys.executable)
+         os.chmod(fname, 0o700)
+@@ -1490,14 +1490,14 @@ class POSIXProcessTestCase(BaseTestCase):
+     def test_specific_shell(self):
+         # Issue #9265: Incorrect name passed as arg[0].
+         shells = []
+-        for prefix in ['/bin', '/usr/bin/', '/usr/local/bin']:
++        for prefix in ['/data/data/com.termux/files/usr/bin', '/data/data/com.termux/files/usr/local/bin']:
+             for name in ['bash', 'ksh']:
+                 sh = os.path.join(prefix, name)
+                 if os.path.isfile(sh):
+                     shells.append(sh)
+         if not shells: # Will probably work for any shell but csh.
+             self.skipTest("bash or ksh required for this test")
+-        sh = '/bin/sh'
++        sh = '/data/data/com.termux/files/usr/bin/sh'
+         if os.path.isfile(sh) and not os.path.islink(sh):
+             # Test will fail if /bin/sh is a symlink to csh.
+             shells.append(sh)
+diff --git a/src/greentest/3.5/test_subprocess.py b/src/greentest/3.5/test_subprocess.py
+index 1dedd02..afd237d 100644
+--- a/src/greentest/3.5/test_subprocess.py
++++ b/src/greentest/3.5/test_subprocess.py
+@@ -1527,7 +1527,7 @@ class POSIXProcessTestCase(BaseTestCase):
+         fd, fname = mkstemp()
+         # reopen in text mode
+         with open(fd, "w", errors="surrogateescape") as fobj:
+-            fobj.write("#!/bin/sh\n")
++            fobj.write("#!/data/data/com.termux/files/usr/bin/sh\n")
+             fobj.write("exec '%s' -c 'import sys; sys.exit(47)'\n" %
+                        sys.executable)
+         os.chmod(fname, 0o700)
+@@ -1572,7 +1572,7 @@ class POSIXProcessTestCase(BaseTestCase):
+         fd, fname = mkstemp()
+         # reopen in text mode
+         with open(fd, "w", errors="surrogateescape") as fobj:
+-            fobj.write("#!/bin/sh\n")
++            fobj.write("#!/data/data/com.termux/files/usr/bin/sh\n")
+             fobj.write("exec '%s' -c 'import sys; sys.exit(47)'\n" %
+                        sys.executable)
+         os.chmod(fname, 0o700)
+@@ -1583,14 +1583,14 @@ class POSIXProcessTestCase(BaseTestCase):
+     def test_specific_shell(self):
+         # Issue #9265: Incorrect name passed as arg[0].
+         shells = []
+-        for prefix in ['/bin', '/usr/bin/', '/usr/local/bin']:
++        for prefix in ['/data/data/com.termux/files/usr/bin', '/data/data/com.termux/files/usr/local/bin']:
+             for name in ['bash', 'ksh']:
+                 sh = os.path.join(prefix, name)
+                 if os.path.isfile(sh):
+                     shells.append(sh)
+         if not shells: # Will probably work for any shell but csh.
+             self.skipTest("bash or ksh required for this test")
+-        sh = '/bin/sh'
++        sh = '/data/data/com.termux/files/usr/bin/sh'
+         if os.path.isfile(sh) and not os.path.islink(sh):
+             # Test will fail if /bin/sh is a symlink to csh.
+             shells.append(sh)
+diff --git a/src/greentest/3.6/test_subprocess.py b/src/greentest/3.6/test_subprocess.py
+index d32982d..9528785 100644
+--- a/src/greentest/3.6/test_subprocess.py
++++ b/src/greentest/3.6/test_subprocess.py
+@@ -1649,14 +1649,14 @@ class POSIXProcessTestCase(BaseTestCase):
+     def test_specific_shell(self):
+         # Issue #9265: Incorrect name passed as arg[0].
+         shells = []
+-        for prefix in ['/bin', '/usr/bin/', '/usr/local/bin']:
++        for prefix in ['/data/data/com.termux/files/usr/bin', '/data/data/com.termux/files/usr/local/bin']:
+             for name in ['bash', 'ksh']:
+                 sh = os.path.join(prefix, name)
+                 if os.path.isfile(sh):
+                     shells.append(sh)
+         if not shells: # Will probably work for any shell but csh.
+             self.skipTest("bash or ksh required for this test")
+-        sh = '/bin/sh'
++        sh = '/data/data/com.termux/files/usr/bin/sh'
+         if os.path.isfile(sh) and not os.path.islink(sh):
+             # Test will fail if /bin/sh is a symlink to csh.
+             shells.append(sh)
+diff --git a/src/greentest/bench_sendall.py b/src/greentest/bench_sendall.py
+index bfb43f8..e97c3f4 100644
+--- a/src/greentest/bench_sendall.py
++++ b/src/greentest/bench_sendall.py
+@@ -1,4 +1,4 @@
+-#! /usr/bin/env python
++#!/data/data/com.termux/files/usr/bin/env python
+ from __future__ import print_function
+ import time
+ from gevent import socket
+diff --git a/src/greentest/test__import_blocking_in_greenlet.py b/src/greentest/test__import_blocking_in_greenlet.py
+index 3ce635f..2cf6f3c 100644
+--- a/src/greentest/test__import_blocking_in_greenlet.py
++++ b/src/greentest/test__import_blocking_in_greenlet.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/python
++#!/data/data/com.termux/files/usr/bin/python
+ # See https://github.com/gevent/gevent/issues/108
+ import gevent
+ from gevent import monkey
+diff --git a/src/greentest/test__issue_728.py b/src/greentest/test__issue_728.py
+index fc61fc2..1ef0fe4 100644
+--- a/src/greentest/test__issue_728.py
++++ b/src/greentest/test__issue_728.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/data/data/com.termux/files/usr/bin/env python
+ from gevent.monkey import patch_all
+ patch_all()
+ 
+diff --git a/src/greentest/test__socket_dns.py b/src/greentest/test__socket_dns.py
+index 1f0681f..42f6c2c 100644
+--- a/src/greentest/test__socket_dns.py
++++ b/src/greentest/test__socket_dns.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/python
++#!/data/data/com.termux/files/usr/bin/python
+ # -*- coding: utf-8 -*-
+ import _six as six
+ import re
+diff --git a/src/greentest/test__socket_dns6.py b/src/greentest/test__socket_dns6.py
+index 69740f6..211ef75 100644
+--- a/src/greentest/test__socket_dns6.py
++++ b/src/greentest/test__socket_dns6.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/python
++#!/data/data/com.termux/files/usr/bin/python
+ # -*- coding: utf-8 -*-
+ import greentest
+ import socket
+diff --git a/src/greentest/test__socket_ssl.py b/src/greentest/test__socket_ssl.py
+index b92d2f9..dc98869 100644
+--- a/src/greentest/test__socket_ssl.py
++++ b/src/greentest/test__socket_ssl.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/python
++#!/data/data/com.termux/files/usr/bin/python
+ from gevent import monkey; monkey.patch_all()
+ import sys
+ import greentest
+diff --git a/src/greentest/testrunner.py b/src/greentest/testrunner.py
+index 7ef191a..72c96e8 100644
+--- a/src/greentest/testrunner.py
++++ b/src/greentest/testrunner.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/data/data/com.termux/files/usr/bin/env python
+ from __future__ import print_function
+ import _six as six
+ import sys
+diff --git a/src/greentest/xtest_signal.py b/src/greentest/xtest_signal.py
+index 84f5d3d..92deb5b 100644
+--- a/src/greentest/xtest_signal.py
++++ b/src/greentest/xtest_signal.py
+@@ -27,7 +27,7 @@ MAX_DURATION = 10
+ 
+ 
+ def run_test():
+-    child = subprocess.Popen(['/bin/true'])
++    child = subprocess.Popen(['/data/data/com.termux/files/usr/bin/true'])
+     child.wait()  # << this is where it blocks
+ 
+ 
+diff --git a/util/cythonpp.py b/util/cythonpp.py
+index c7660d6..819d49c 100755
+--- a/util/cythonpp.py
++++ b/util/cythonpp.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/data/data/com.termux/files/usr/bin/env python
+ # Copyright (C) 2011-2012 Denis Bilenko (http://denisbilenko.com)
+ # Copyright (C) 2015-2016 gevent contributors
+ from __future__ import print_function
+diff --git a/util/makedeb.sh b/util/makedeb.sh
+index 0329c9f..ccc879a 100755
+--- a/util/makedeb.sh
++++ b/util/makedeb.sh
+@@ -1,4 +1,4 @@
+-#!/bin/bash
++#!/data/data/com.termux/files/usr/bin/bash
+ set -e
+ CWD=`pwd`
+ rm -fr /tmp/build_gevent_deb
+diff --git a/util/makedist.py b/util/makedist.py
+index 05f55bd..d56644a 100755
+--- a/util/makedist.py
++++ b/util/makedist.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/python
++#!/data/data/com.termux/files/usr/bin/python
+ # Copyright (C) 2012 Denis Bilenko (http://denisbilenko.com)
+ """
+ Create a source distribution of gevent.
+diff --git a/util/set_version.py b/util/set_version.py
+index bb372f8..505e2df 100755
+--- a/util/set_version.py
++++ b/util/set_version.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/python
++#!/data/data/com.termux/files/usr/bin/python
+ """Update __version__, version_info and add __changeset__.
+ 
+ 'dev' in version_info should be replaced with alpha|beta|candidate|final
+diff --git a/util/wintest.py b/util/wintest.py
+index 3221826..db54801 100755
+--- a/util/wintest.py
++++ b/util/wintest.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/python -u
++#!/data/data/com.termux/files/usr/bin/python -u
+ """
+ Unix utilities must be installed on target machine for this to work: http://unxutils.sourceforge.net/
+ """
+-- 
+2.13.3
+

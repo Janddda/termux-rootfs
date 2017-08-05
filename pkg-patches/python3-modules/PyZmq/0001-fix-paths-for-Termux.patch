@@ -1,0 +1,27 @@
+From 38619cadefcfe1fb2ebfb7d5e31a4be251b9fd6e Mon Sep 17 00:00:00 2001
+From: Leonid Plyushch <leonid.plyushch@gmail.com>
+Date: Fri, 28 Jul 2017 20:25:32 +0300
+Subject: [PATCH] fix paths for Termux
+
+---
+ zmqversion.py | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/zmqversion.py b/zmqversion.py
+index 0b98ca1..967908d 100644
+--- a/zmqversion.py
++++ b/zmqversion.py
+@@ -36,8 +36,8 @@ def include_dirs_from_path():
+     return include_dirs
+ 
+ def default_include_dirs():
+-    """Default to just /usr/local/include:/usr/include"""
+-    return ['/usr/local/include', '/usr/include']
++    """Default to just /data/data/com.termux/files/usr/include"""
++    return ['/data/data/com.termux/files/usr/include']
+ 
+ def find_zmq_version():
+     """check setup.cfg, then /usr/local/include, then /usr/include for zmq.h.
+-- 
+2.13.3
+

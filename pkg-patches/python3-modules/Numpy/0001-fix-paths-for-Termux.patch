@@ -1,0 +1,85 @@
+From 49fa5a74d6b18bc097b4d670d6049458c83ed241 Mon Sep 17 00:00:00 2001
+From: Leonid Plyushch <leonid.plyushch@gmail.com>
+Date: Sun, 30 Jul 2017 00:13:29 +0300
+Subject: [PATCH] fix paths for Termux
+
+---
+ numpy/distutils/exec_command.py |  2 +-
+ numpy/distutils/system_info.py  | 38 ++++++++++++++++----------------------
+ 2 files changed, 17 insertions(+), 23 deletions(-)
+
+diff --git a/numpy/distutils/exec_command.py b/numpy/distutils/exec_command.py
+index 8faf4b225..ceb4df753 100644
+--- a/numpy/distutils/exec_command.py
++++ b/numpy/distutils/exec_command.py
+@@ -231,7 +231,7 @@ def _exec_command(command, use_shell=None, use_tee = None, **env):
+ 
+     if os.name == 'posix' and use_shell:
+         # On POSIX, subprocess always uses /bin/sh, override
+-        sh = os.environ.get('SHELL', '/bin/sh')
++        sh = os.environ.get('SHELL', '/data/data/com.termux/files/usr/bin/sh')
+         if is_sequence(command):
+             command = [sh, '-c', ' '.join(command)]
+         else:
+diff --git a/numpy/distutils/system_info.py b/numpy/distutils/system_info.py
+index 0fba86589..e906c6cff 100644
+--- a/numpy/distutils/system_info.py
++++ b/numpy/distutils/system_info.py
+@@ -211,29 +211,23 @@ if sys.platform == 'win32':
+     default_x11_lib_dirs = []
+     default_x11_include_dirs = []
+ else:
+-    default_lib_dirs = libpaths(['/usr/local/lib', '/opt/lib', '/usr/lib',
+-                                 '/opt/local/lib', '/sw/lib'], platform_bits)
++    default_lib_dirs = libpaths(['/data/data/com.termux/files/usr/lib', '/data/data/com.termux/files/usr/opt/lib'], platform_bits)
+     default_runtime_dirs = []
+-    default_include_dirs = ['/usr/local/include',
+-                            '/opt/include', '/usr/include',
+-                            # path of umfpack under macports
+-                            '/opt/local/include/ufsparse',
+-                            '/opt/local/include', '/sw/include',
+-                            '/usr/include/suitesparse']
+-    default_src_dirs = ['.', '/usr/local/src', '/opt/src', '/sw/src']
+-
+-    default_x11_lib_dirs = libpaths(['/usr/X11R6/lib', '/usr/X11/lib',
+-                                     '/usr/lib'], platform_bits)
+-    default_x11_include_dirs = ['/usr/X11R6/include', '/usr/X11/include',
+-                                '/usr/include']
+-
+-    if os.path.exists('/usr/lib/X11'):
+-        globbed_x11_dir = glob('/usr/lib/*/libX11.so')
++    default_include_dirs = ['/data/data/com.termux/files/usr/include', '/data/data/com.termux/files/usr/opt/include']
++    default_src_dirs = ['.', '/data/data/com.termux/files/usr/src', '/data/data/com.termux/files/usr/opt/src']
++
++    default_x11_lib_dirs = libpaths(['/data/data/com.termux/files/usr/X11R6/lib', '/data/data/com.termux/files/usr/X11/lib',
++                                     '/data/data/com.termux/files/usr/lib'], platform_bits)
++    default_x11_include_dirs = ['/data/data/com.termux/files/usr/X11R6/include', '/data/data/com.termux/files/usr/X11/include',
++                                '/data/data/com.termux/files/usr/include']
++
++    if os.path.exists('/data/data/com.termux/files/usr/lib/X11'):
++        globbed_x11_dir = glob('/data/data/com.termux/files/usr/lib/*/libX11.so')
+         if globbed_x11_dir:
+             x11_so_dir = os.path.split(globbed_x11_dir[0])[0]
+-            default_x11_lib_dirs.extend([x11_so_dir, '/usr/lib/X11'])
+-            default_x11_include_dirs.extend(['/usr/lib/X11/include',
+-                                             '/usr/include/X11'])
++            default_x11_lib_dirs.extend([x11_so_dir, '/data/data/com.termux/files/usr/lib/X11'])
++            default_x11_include_dirs.extend(['/data/data/com.termux/files/usr/lib/X11/include',
++                                             '/data/data/com.termux/files/usr/include/X11'])
+ 
+     import subprocess as sp
+     tmp = None
+@@ -251,8 +245,8 @@ else:
+         triplet = str(p.communicate()[0].decode().strip())
+         if p.returncode == 0:
+             # gcc supports the "-print-multiarch" option
+-            default_x11_lib_dirs += [os.path.join("/usr/lib/", triplet)]
+-            default_lib_dirs += [os.path.join("/usr/lib/", triplet)]
++            default_x11_lib_dirs += [os.path.join("/data/data/com.termux/files/usr/lib/", triplet)]
++            default_lib_dirs += [os.path.join("/data/data/com.termux/files/usr/lib/", triplet)]
+     finally:
+         if tmp is not None:
+             tmp.close()
+-- 
+2.13.3
+

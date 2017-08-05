@@ -1,0 +1,134 @@
+From 7f2756010811585833640332499c3678dfaca53b Mon Sep 17 00:00:00 2001
+From: Leonid Plyushch <leonid.plyushch@gmail.com>
+Date: Fri, 31 Mar 2017 16:24:27 +0300
+Subject: [PATCH] fix paths for Termux
+
+---
+ bin/rebuild-script.py    |  2 +-
+ scripts/virtualenv       |  2 +-
+ tests/test_activate.sh   |  2 +-
+ tests/test_virtualenv.py | 12 ++++++------
+ virtualenv.py            | 10 +++++-----
+ 5 files changed, 14 insertions(+), 14 deletions(-)
+
+diff --git a/bin/rebuild-script.py b/bin/rebuild-script.py
+index d0bc93e..cad8692 100755
+--- a/bin/rebuild-script.py
++++ b/bin/rebuild-script.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/data/data/com.termux/files/usr/bin/env python
+ """
+ Helper script to rebuild virtualenv.py from virtualenv_support
+ """
+diff --git a/scripts/virtualenv b/scripts/virtualenv
+index c961dd7..f2d5b94 100644
+--- a/scripts/virtualenv
++++ b/scripts/virtualenv
+@@ -1,3 +1,3 @@
+-#!/usr/bin/env python
++#!/data/data/com.termux/files/usr/bin/env python
+ import virtualenv
+ virtualenv.main()
+diff --git a/tests/test_activate.sh b/tests/test_activate.sh
+index e277273..f72455b 100755
+--- a/tests/test_activate.sh
++++ b/tests/test_activate.sh
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/data/data/com.termux/files/usr/bin/sh
+ 
+ set -u
+ 
+diff --git a/tests/test_virtualenv.py b/tests/test_virtualenv.py
+index ce45ede..d766df0 100644
+--- a/tests/test_virtualenv.py
++++ b/tests/test_virtualenv.py
+@@ -20,7 +20,7 @@ def test_resolve_interpreter_with_absolute_path(mock_exists):
+     """Should return absolute path if given and exists"""
+     mock_exists.return_value = True
+     virtualenv.is_executable = Mock(return_value=True)
+-    test_abs_path = os.path.abspath("/usr/bin/python53")
++    test_abs_path = os.path.abspath("/data/data/com.termux/files/usr/bin/python53")
+ 
+     exe = virtualenv.resolve_interpreter(test_abs_path)
+ 
+@@ -36,9 +36,9 @@ def test_resolve_interpreter_with_nonexistent_interpreter(mock_exists):
+     mock_exists.return_value = False
+ 
+     with pytest.raises(SystemExit):
+-        virtualenv.resolve_interpreter("/usr/bin/python53")
++        virtualenv.resolve_interpreter("/data/data/com.termux/files/usr/bin/python53")
+ 
+-    mock_exists.assert_called_with("/usr/bin/python53")
++    mock_exists.assert_called_with("/data/data/com.termux/files/usr/bin/python53")
+ 
+ 
+ @patch('os.path.exists')
+@@ -46,7 +46,7 @@ def test_resolve_interpreter_with_invalid_interpreter(mock_exists):
+     """Should exit when with absolute path if not exists"""
+     mock_exists.return_value = True
+     virtualenv.is_executable = Mock(return_value=False)
+-    invalid = os.path.abspath("/usr/bin/pyt_hon53")
++    invalid = os.path.abspath("/data/data/com.termux/files/usr/bin/pyt_hon53")
+ 
+     with pytest.raises(SystemExit):
+         virtualenv.resolve_interpreter(invalid)
+@@ -58,13 +58,13 @@ def test_resolve_interpreter_with_invalid_interpreter(mock_exists):
+ def test_activate_after_future_statements():
+     """Should insert activation line after last future statement"""
+     script = [
+-        '#!/usr/bin/env python',
++        '#!/data/data/com.termux/files/usr/bin/env python',
+         'from __future__ import with_statement',
+         'from __future__ import print_function',
+         'print("Hello, world!")'
+     ]
+     assert virtualenv.relative_script(script) == [
+-        '#!/usr/bin/env python',
++        '#!/data/data/com.termux/files/usr/bin/env python',
+         'from __future__ import with_statement',
+         'from __future__ import print_function',
+         '',
+diff --git a/virtualenv.py b/virtualenv.py
+index 42cd1f4..5b0f1d7 100755
+--- a/virtualenv.py
++++ b/virtualenv.py
+@@ -1,4 +1,4 @@
+-#!/usr/bin/env python
++#!/data/data/com.termux/files/usr/bin/env python
+ """Create a "virtual" Python installation"""
+ 
+ import os
+@@ -1599,7 +1599,7 @@ def fixup_scripts(home_dir, bin_dir):
+             '%s /c' % os.path.normcase(os.environ.get('COMSPEC', 'cmd.exe')),
+             '', '.exe')
+     else:
+-        new_shebang_args = ('/usr/bin/env', sys.version[:3], '')
++        new_shebang_args = ('/data/data/com.termux/files/usr/bin/env', sys.version[:3], '')
+ 
+     # This is what we expect at the top of scripts:
+     shebang = '#!%s' % os.path.normcase(os.path.join(
+@@ -1791,8 +1791,8 @@ def create_bootstrap_script(extra_text, python_version=''):
+         script from that package.
+ 
+     If you provide something like ``python_version='2.5'`` then the
+-    script will start with ``#!/usr/bin/env python2.5`` instead of
+-    ``#!/usr/bin/env python``.  You can use this when the script must
++    script will start with ``#!/data/data/com.termux/files/usr/bin/env python2.5`` instead of
++    ``#!/data/data/com.termux/files/usr/bin/env python``.  You can use this when the script must
+     be run with a particular Python version.
+     """
+     filename = __file__
+@@ -1801,7 +1801,7 @@ def create_bootstrap_script(extra_text, python_version=''):
+     with codecs.open(filename, 'r', encoding='utf-8') as f:
+         content = f.read()
+     py_exe = 'python%s' % python_version
+-    content = (('#!/usr/bin/env %s\n' % py_exe)
++    content = (('#!/data/data/com.termux/files/usr/bin/env %s\n' % py_exe)
+                + '## WARNING: This file is generated\n'
+                + content)
+     return content.replace('##EXT' 'END##', extra_text)
+-- 
+2.13.3
+

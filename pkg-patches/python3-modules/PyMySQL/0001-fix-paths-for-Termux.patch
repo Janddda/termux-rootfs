@@ -1,0 +1,25 @@
+From 529206f09abda2b6161eb8a147f794aab11b06b8 Mon Sep 17 00:00:00 2001
+From: Leonid Plyushch <leonid.plyushch@gmail.com>
+Date: Sat, 29 Jul 2017 17:27:29 +0300
+Subject: [PATCH] fix paths for Termux
+
+---
+ pymysql/connections.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/pymysql/connections.py b/pymysql/connections.py
+index 31dd85a..494ffc8 100644
+--- a/pymysql/connections.py
++++ b/pymysql/connections.py
+@@ -608,7 +608,7 @@ class Connection(object):
+             if sys.platform.startswith("win"):
+                 read_default_file = "c:\\my.ini"
+             else:
+-                read_default_file = "/etc/my.cnf"
++                read_default_file = "/data/data/com.termux/files/usr/etc/my.cnf"
+ 
+         if read_default_file:
+             if not read_default_group:
+-- 
+2.13.3
+

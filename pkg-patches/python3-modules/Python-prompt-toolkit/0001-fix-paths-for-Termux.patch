@@ -1,0 +1,33 @@
+From 1166d1abd22d282edd2cd35309e4f882df13a02f Mon Sep 17 00:00:00 2001
+From: Leonid Plyushch <leonid.plyushch@gmail.com>
+Date: Sat, 29 Jul 2017 22:57:15 +0300
+Subject: [PATCH] fix paths for Termux
+
+---
+ prompt_toolkit/buffer.py | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/prompt_toolkit/buffer.py b/prompt_toolkit/buffer.py
+index f5df289..7bce67d 100644
+--- a/prompt_toolkit/buffer.py
++++ b/prompt_toolkit/buffer.py
+@@ -1307,11 +1307,11 @@ class Buffer(object):
+             editor,
+ 
+             # Order of preference.
+-            '/usr/bin/editor',
+-            '/usr/bin/nano',
+-            '/usr/bin/pico',
+-            '/usr/bin/vi',
+-            '/usr/bin/emacs',
++            '/data/data/com.termux/files/usr/bin/editor',
++            '/data/data/com.termux/files/usr/bin/nano',
++            '/data/data/com.termux/files/usr/bin/pico',
++            '/data/data/com.termux/files/usr/bin/vi',
++            '/data/data/com.termux/files/usr/bin/emacs',
+         ]
+ 
+         for e in editors:
+-- 
+2.13.3
+
