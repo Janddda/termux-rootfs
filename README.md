@@ -1,5 +1,5 @@
 # Termux-RootFS
-This is a static root filesystem for Termux (AArch64). It is based on packages from [official termux repository](http://termux.net) and some
+This is a static root filesystem for [Termux](https://github.com/termux/termux-app) (AArch64). It is based on packages from [official termux repository](http://termux.net) and some
 advanced software. It's working on Samsung Galaxy S7, but no guarantee that it will work on other devices.
 
 __Warning:__ no apt or dpkg installed, everything is managed manually.
