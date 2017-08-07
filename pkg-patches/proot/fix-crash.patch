@@ -1,0 +1,13 @@
+diff -uNr proot-9fc1f2db56712f1bee38b568f5d4cf862763fd88/src/path/proc.c proot-9fc1f2db56712f1bee38b568f5d4cf862763fd88.new/src/path/proc.c
+--- proot-9fc1f2db56712f1bee38b568f5d4cf862763fd88/src/path/proc.c	2017-02-01 16:07:27.000000000 +0000
++++ proot-9fc1f2db56712f1bee38b568f5d4cf862763fd88.new/src/path/proc.c	2017-04-03 12:18:57.360292147 +0000
+@@ -49,7 +49,8 @@
+ 	int status;
+ 	pid_t pid;
+ 
+-	assert(comparison == compare_paths("/proc", base));
++	// This causing crash when doing 'ls /proc/device-tree'
++	//assert(comparison == compare_paths("/proc", base));
+ 
+ 	/* Remember: comparison = compare_paths("/proc", base)  */
+ 	switch (comparison) {
