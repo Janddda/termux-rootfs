@@ -122,6 +122,7 @@ fi
 echo -n "[*] Checking SHA-256... "
 if [ "$(sha256sum ${ARCHIVE_PATH} | awk '{ print $1 }')" != "${ARCHIVE_SHA256}" ]; then
     echo "FAIL"
+    rm -f "${ARCHIVE_PATH}"
     exit 1
 else
     echo "OK"
