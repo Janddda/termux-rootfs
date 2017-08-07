@@ -50,10 +50,14 @@ If bad things happened, then use your backup (if you did it).
 Incremental updates can be installed with command ```termux-upgrade-rootfs```. If the
 upgrading process fails, you can apply patch manually with command:
 ```
-  $ termux-apply-patch PATCH_FILE.bin
+  $ termux-apply-patch termux-rootfs-patch-inc-v${VERSION}.bin
 ```
-File 'PATCH_FILE.bin' is a binary patch file that should be downloaded from the
-[releases page](https://github.com/xeffyr/termux-rootfs/releases).
+File 'termux-rootfs-patch-inc-v${VERSION}.bin' is a binary patch file that should
+be downloaded from the [releases page](https://github.com/xeffyr/termux-rootfs/releases). Label '${VERSION}' should be replaced with
+next version, for example 3.3.
+
+Currently, batch updates is not possible. So, for example, if you want to update from
+version 3.0 to 3.2, you need to upgrade to version 3.1 first and then to 3.2.
 
 ## Password login protection
 You can prevent using of termux by unwanted users by setting password with command '__passwd__' or '__termux-setup-rootfs__'.
@@ -133,13 +137,13 @@ __libraries:__
   glib, gnutls, harfbuzz, harfbuzz-icu, icu, imlib2, libandroid-glob,
   libandroid-shmem, libandroid-support, libcaca, libconfig, libconfuse,
   libclang, libcroco, libcrypt, libcurl, libedit, libevent, libffi,
-  libgcrypt, libgd, libgit2, libidn, libisl, libjasper, libjpeg-turbo,
-  libmp3lame, libmpc, libmpfr, libnet, libnl, libnpth, libogg, libpcap,
-  libpcre, libpipeline, libpng, libpopt, libqrencode, librsync, libsodium,
-  libssh, libssh2, libtalloc, libtiff, libunistring, libutil, libuuid,
-  libvorbis, libx264, libx265, libxml2, libxslt, libzmq, libzopfli, ldns,
-  leptonica, littlecms, miniupnpc, ncurses, nettle, nghttp2, openblas,
-  openjpeg, openssl, opus, pango, poppler, readline, c-toxcore, zlib
+  libgcrypt, libgd, libgit2, libidn, libisl, libjansson, libjasper,
+  libjpeg-turbo, libmp3lame, libmpc, libmpfr, libnet, libnl, libnpth,
+  libogg, libpcap, libpcre, libpipeline, libpng, libpopt, libqrencode,
+  librsync, libsodium, libssh, libssh2, libtalloc, libtiff, libunistring,
+  libutil, libuuid, libvorbis, libx264, libx265, libxml2, libxslt, libzmq,
+  libzopfli, ldns, leptonica, littlecms, miniupnpc, ncurses, nettle, nghttp2,
+  openblas, openjpeg, openssl, opus, pango, poppler, readline, c-toxcore, zlib
 ```
 __media:__
 ```
