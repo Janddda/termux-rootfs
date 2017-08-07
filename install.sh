@@ -161,4 +161,8 @@ fi
 
 rm -f "${ARCHIVE_PATH}"
 
+## Remove lock file '.termux-rootfs_configured' if it exists before
+## running 'termux-setup-rootfs'
+rm -f "${HOME}/.termux-rootfs_configured"
+
 exec "${PREFIX}"/bin/bash "${PREFIX}"/bin/termux-setup-rootfs
