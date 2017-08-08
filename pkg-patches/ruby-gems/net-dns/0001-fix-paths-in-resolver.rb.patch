@@ -1,0 +1,25 @@
+From 206449fc6cb0f3258661d84e1e320334d25cffee Mon Sep 17 00:00:00 2001
+From: Leonid Plyushch <leonid.plyushch@gmail.com>
+Date: Mon, 24 Jul 2017 12:32:32 +0300
+Subject: [PATCH] fix paths in resolver.rb
+
+---
+ lib/net/dns/resolver.rb | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lib/net/dns/resolver.rb b/lib/net/dns/resolver.rb
+index c07cecd..44f893f 100644
+--- a/lib/net/dns/resolver.rb
++++ b/lib/net/dns/resolver.rb
+@@ -99,7 +99,7 @@ module Net
+       # the description for each parameter to have an
+       # explanation of its usage.
+       Defaults = {
+-        :config_file => "/etc/resolv.conf",
++        :config_file => "/data/data/com.termux/files/usr/etc/resolv.conf",
+         :log_file => $stdout,
+         :port => 53,
+         :searchlist => [],
+-- 
+2.13.3
+

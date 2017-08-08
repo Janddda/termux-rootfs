@@ -1,0 +1,39 @@
+From b00ca3a8822e411f21068a4ac8b97784845993d8 Mon Sep 17 00:00:00 2001
+From: Leonid Plyushch <leonid.plyushch@gmail.com>
+Date: Mon, 24 Jul 2017 12:36:54 +0300
+Subject: [PATCH] fix paths
+
+---
+ lib/packetfu/config.rb | 2 +-
+ lib/packetfu/utils.rb  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/lib/packetfu/config.rb b/lib/packetfu/config.rb
+index 502d8eb..3522387 100644
+--- a/lib/packetfu/config.rb
++++ b/lib/packetfu/config.rb
+@@ -36,7 +36,7 @@ module PacketFu
+       if Process.euid.zero?
+         @iface = args[:iface] || ENV['IFACE'] || Pcap.lookupdev || "lo" 
+       end
+-      @pcapfile = "/tmp/out.pcap"
++      @pcapfile = "/data/data/com.termux/files/usr/tmp/out.pcap"
+       args.each_pair { |k,v| self.instance_variable_set(("@#{k}"),v) }
+     end
+ 
+diff --git a/lib/packetfu/utils.rb b/lib/packetfu/utils.rb
+index e402cfb..3ff2b47 100644
+--- a/lib/packetfu/utils.rb
++++ b/lib/packetfu/utils.rb
+@@ -151,7 +151,7 @@ module PacketFu
+ 
+               my_data =	{
+                 :iface => (args[:iface] || ENV['IFACE'] || default_int || "lo").to_s,
+-                :pcapfile => args[:pcapfile] || "/tmp/out.pcap",
++                :pcapfile => args[:pcapfile] || "/data/data/com.termux/files/usr/tmp/out.pcap",
+                 :eth_saddr => pkt.eth_saddr,
+                 :eth_src => pkt.eth_src.to_s,
+                 :ip_saddr => pkt.ip_saddr,
+-- 
+2.13.3
+
