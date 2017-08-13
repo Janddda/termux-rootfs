@@ -48,16 +48,13 @@ If bad things happened, then use your backup (if you did it).
 
 ## How to upgrade
 Incremental updates can be installed with command ```termux-upgrade-rootfs```. If the
-upgrading process fails, you can apply patch manually with command:
+upgrading process fails, you can try to apply patch manually with command:
 ```
   $ termux-apply-patch termux-rootfs-patch-inc-v${VERSION}.bin
 ```
 File 'termux-rootfs-patch-inc-v${VERSION}.bin' is a binary patch file that should
 be downloaded from the [releases page](https://github.com/xeffyr/termux-rootfs/releases). Label '${VERSION}' should be replaced with
 next version, for example 3.3.
-
-Currently, batch updates is not possible. So, for example, if you want to update from
-version 3.0 to 3.2, you need to upgrade to version 3.1 first and then to 3.2.
 
 ## Password login protection
 You can prevent using of termux by unwanted users by setting password with command '__passwd__' or '__termux-setup-rootfs__'.
@@ -113,7 +110,7 @@ __development:__
 ```
 __encryption:__
 ```
-  aespipe, cryptsetup, encfs, gnupg, gnutls, openssl, scrypt, steghide
+  aespipe, codecrypt, cryptsetup, encfs, gnupg, gnutls, openssl, scrypt, steghide
 ```
 __filesystem:__
 ```
@@ -136,8 +133,8 @@ __libraries:__
   boost, cairo, c-ares, db, expat, fftw, flac, fontconfig, freetype, gdbm,
   glib, gnutls, harfbuzz, harfbuzz-icu, icu, imlib2, libandroid-glob,
   libandroid-shmem, libandroid-support, libcaca, libconfig, libconfuse,
-  libclang, libcroco, libcrypt, libcurl, libedit, libevent, libffi,
-  libgcrypt, libgd, libgit2, libidn, libisl, libjansson, libjasper,
+  libclang, libcroco, libcrypt, libcryptopp, libcurl, libedit, libevent,
+  libffi, libgcrypt, libgd, libgit2, libidn, libisl, libjansson, libjasper,
   libjpeg-turbo, libmp3lame, libmpc, libmpfr, libnet, libnl, libnpth,
   libogg, libpcap, libpcre, libpipeline, libpng, libpopt, libqrencode,
   librsync, libsodium, libssh, libssh2, libtalloc, libtiff, libunistring,
