@@ -1,10 +1,27 @@
 ##
-##    This file provides version info for install.sh and upgrade.sh
+##    Shell script that provides version info
 ##
 
+LATEST_VERSION="3.3"
+
+## SHA-256 checksum for latest archive
+ARCHIVE_SHA256="30be37621d95235f68afdba95891d4385d94e0ca50c8c3b012b6035f44f4b6de"
+
+## Whether to enable incremental updates
 ENABLE_INC_UPDATES="yes"
 
-CURRENT_VERSION="3.2"
-PREVIOUS_VERSION="3.1"
-ARCHIVE_SHA256="cdfa35fac175260ca991be7cf26cb277127205edd644dd3a438aa025ad5436fc"
-PATCH_SHA256="ec7610740b979a7176036d5fcbf7464ecf8f78a574c2b074fbdef319f1d7b008"
+## Deprecated variables (will be removed on next version)
+CURRENT_VERSION="3.3"
+PREVIOUS_VERSION="3.2"
+PATCH_SHA256="75d9cd9fbb10e070c8da4c0899154daf2d72588c568dc5c46a2ab7108368ea48"
+
+##
+##  Scheme for doing batch incremental updates, for example from 3.3 to 3.5
+##
+##  Format:
+##    PREV_VERSION:NEXT_VERSION:PATCH_SHA256
+##
+UPDATES_SCHEME=""
+## Will be enabled after release of next version
+#read -d '' UPDATES_SCHEME << EOF
+#EOF
