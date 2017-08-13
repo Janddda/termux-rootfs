@@ -9,28 +9,28 @@
 ##
 ###############################################################################
 
+## use command busybox's version of command 'echo'
+alias echo='busybox echo'
+
 SCRIPT_PATH=$(realpath "${0}")
 SCRIPT_DIR=$(dirname "${SCRIPT_PATH}")
 
 if [ ! -f "${SCRIPT_DIR}/VERSION_INFO" ]; then
-    echo "[!] Cannot obtain version info"
+    echo "[!] Cannot obtain version info."
     exit 1
 fi
 
-## Set variables: CURRENT_VERSION, ENABLE_INC_UPDATES, PREVIOUS_VERSION,
-##                ARCHIVE_SHA256, PATCH_SHA256
+## VERSION_INFO contains the following variables:
+##   LATEST_VERSION, ARCHIVE_SHA256, ENABLE_INC_UPDATES, UPDATES_SCHEME
 . "${SCRIPT_DIR}"/VERSION_INFO
 
 BASEDIR="/data/data/com.termux/files"
 
-ARCHIVE_NAME="termux-rootfs-v${CURRENT_VERSION}.tar.bz2"
+ARCHIVE_NAME="termux-rootfs-v${LATEST_VERSION}.tar.bz2"
 ARCHIVE_PATH="${BASEDIR}/${ARCHIVE_NAME}"
-ARCHIVE_URL="https://github.com/xeffyr/termux-rootfs/releases/download/v${CURRENT_VERSION}/${ARCHIVE_NAME}"
+ARCHIVE_URL="https://github.com/xeffyr/termux-rootfs/releases/download/v${LATEST_VERSION}/${ARCHIVE_NAME}"
 
-ROOTFS_DIR="termux-rootfs-v${CURRENT_VERSION}"
-
-## use command busybox's version of command 'echo'
-alias echo='busybox echo'
+ROOTFS_DIR="termux-rootfs-v${LATEST_VERSION}"
 
 ###############################################################################
 ##
@@ -78,7 +78,7 @@ fi
 NEEDED_PACKAGES=""
 
 for bin in bash bzip2 coreutils tar wget; do
-    if ! is_binary_installed ${bin}; then
+    if ! is_binary_installed "${bin}"; then
         NEEDED_PACKAGES="${NEEDED_PACKAGES} ${bin}"
     fi
 done
@@ -96,7 +96,6 @@ if [ ! -z "${NEEDED_PACKAGES}" ]; then
         done
     else
         echo "[!] The following packages is not available:"
-
         echo
         for bin in ${NEEDED_PACKAGES}; do
             echo "    + ${bin}"
@@ -112,7 +111,7 @@ fi
 ###############################################################################
 
 if [ ! -e "${ARCHIVE_PATH}" ]; then
-    echo "[*] Downloading archive..."
+    echo "[*] Downloading archive (v${LATEST_VERSION})..."
     if ! wget -O "${ARCHIVE_PATH}" "${ARCHIVE_URL}"; then
         echo "[!] Failed to download archive"
         exit 1
@@ -129,7 +128,7 @@ else
 fi
 
 if [ ! -e "${BASEDIR}/${ROOTFS_DIR}" ]; then
-    echo -n "[*] Extracting data... "
+    echo -n "[*] Extracting data (may take several minutes)... "
     if ! tar jxf "${ARCHIVE_PATH}" -C "${BASEDIR}" > /dev/null 2>&1; then
         echo "FAIL"
         exit 1
@@ -144,7 +143,7 @@ fi
 if [ ! -e "${BASEDIR}/usr.old" ]; then
     echo -n "[*] Replacing rootfs... "
     if /system/bin/mv "${BASEDIR}"/usr "${BASEDIR}"/usr.old; then
-        if /system/bin/mv "${BASEDIR}/termux-rootfs-v${CURRENT_VERSION}" "${BASEDIR}"/usr; then
+        if /system/bin/mv "${BASEDIR}/${ROOTFS_DIR}" "${BASEDIR}"/usr; then
             echo "OK"
         else
             echo "FAIL"
