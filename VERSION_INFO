@@ -2,18 +2,13 @@
 ##    Shell script that provides version info
 ##
 
-LATEST_VERSION="3.3"
+LATEST_VERSION="3.4"
 
 ## SHA-256 checksum for latest archive
-ARCHIVE_SHA256="30be37621d95235f68afdba95891d4385d94e0ca50c8c3b012b6035f44f4b6de"
+ARCHIVE_SHA256="5f98e5509725b0fd4b68eb3fabd83216a13ca8042ef0f492439ad2c5b4a8c529"
 
 ## Whether to enable incremental updates
 ENABLE_INC_UPDATES="yes"
-
-## Deprecated variables (will be removed on next version)
-CURRENT_VERSION="3.3"
-PREVIOUS_VERSION="3.2"
-PATCH_SHA256="75d9cd9fbb10e070c8da4c0899154daf2d72588c568dc5c46a2ab7108368ea48"
 
 ##
 ##  Scheme for doing batch incremental updates, for example from 3.3 to 3.5
@@ -21,7 +16,6 @@ PATCH_SHA256="75d9cd9fbb10e070c8da4c0899154daf2d72588c568dc5c46a2ab7108368ea48"
 ##  Format:
 ##    PREV_VERSION:NEXT_VERSION:PATCH_SHA256
 ##
-UPDATES_SCHEME=""
-## Will be enabled after release of next version
-#read -d '' UPDATES_SCHEME << EOF
-#EOF
+read -d '' UPDATES_SCHEME << EOF
+3.3:3.4:09c7cda531c47de16d1c900958a03bb7ca8dad119791446362051457b9bfdc54
+EOF
