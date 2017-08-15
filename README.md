@@ -65,9 +65,9 @@ To remove password login, delete file '__$PREFIX/etc/login.pwd__'.
 ## Available software
 __admin tools:__
 ```
-  bmon, cpulimit, dnsutils, fsmon, geoip, httping, hping3, iproute2, iperf3,
-  iw, macchanger, ngrep, nmap, proot, pwgen, ranpwd, sensors, sslscan, sipcalc,
-  tracepath, whois, wireless-tools
+  bmon, cpulimit, debootstrap, dnsutils, fsmon, geoip, httping, hping3, iproute2,
+  iperf3, iw, macchanger, ngrep, nmap, proot, pwgen, ranpwd, sensors, sslscan,
+  sipcalc, tracepath, whois, wireless-tools
 ```
 __android:__
 ```
