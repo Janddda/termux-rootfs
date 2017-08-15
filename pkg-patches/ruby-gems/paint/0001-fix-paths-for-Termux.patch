@@ -1,0 +1,25 @@
+From 4f7d152b394aedceb117bcacaead87f36e8bc3ee Mon Sep 17 00:00:00 2001
+From: Leonid Plyushch <leonid.plyushch@gmail.com>
+Date: Tue, 15 Aug 2017 14:32:27 +0300
+Subject: [PATCH] fix paths for Termux
+
+---
+ lib/paint/util.rb | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/lib/paint/util.rb b/lib/paint/util.rb
+index e6c92f5..0082626 100644
+--- a/lib/paint/util.rb
++++ b/lib/paint/util.rb
+@@ -17,7 +17,7 @@ module Paint
+     end
+ 
+     # Updates color names
+-    def update_rgb_colors(path = '/etc/X11/rgb.txt')
++    def update_rgb_colors(path = '/data/data/com.termux/files/usr/etc/X11/rgb.txt')
+       if File.file?(path)
+         Paint::RGB_COLORS.clear
+ 
+-- 
+2.14.1
+
