@@ -1,25 +1,21 @@
-From a5a19f42e1ec14fa0c5504cafc36b3af069cb6f7 Mon Sep 17 00:00:00 2001
-From: Leonid Plyushch <leonid.plyushch@gmail.com>
-Date: Mon, 24 Jul 2017 12:14:10 +0300
-Subject: [PATCH] fix netifaces.c
-
----
- ext/network_interface_ext/netifaces.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/ext/network_interface_ext/netifaces.c b/ext/network_interface_ext/netifaces.c
-index 664a88c..467f3dd 100644
---- a/ext/network_interface_ext/netifaces.c
-+++ b/ext/network_interface_ext/netifaces.c
-@@ -677,7 +677,7 @@ rbnetifaces_s_interfaces (VALUE self)
+--- ./ext/network_interface_ext/netifaces.c
++++ ./ext/network_interface_ext/netifaces.c
+@@ -677,7 +677,7 @@
      return Qnil;
    }
  
 -  *pfreq = ifc.CNAME(ifc_req);
-+  *pfreq = *ifc.CNAME(ifc_req);
++  pfreq = ifc.CNAME(ifc_req);
  
    for (n = 0; n < ifc.CNAME(ifc_len)/sizeof(struct CNAME(ifreq));n++,pfreq++)
    {
--- 
-2.13.3
-
+--- ./ext/network_interface_ext/netifaces.h
++++ ./ext/network_interface_ext/netifaces.h
+@@ -30,6 +30,7 @@
+ /* For Linux, include all the sockaddr
+    definitions we can lay our hands on. */
+ #if !HAVE_SOCKADDR_SA_LEN
++#    include <netinet/in.h>
+ #  if HAVE_NETASH_ASH_H
+ #    include <netash/ash.h>
+ #  endif
