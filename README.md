@@ -2,7 +2,7 @@
 This is a static root filesystem for [Termux](https://github.com/termux/termux-app) (AArch64). It is based on packages from [official termux repository](http://termux.net) and some
 advanced software. It's working on Samsung Galaxy S7, but no guarantee that it will work on other devices.
 
-__Warning:__ no apt or dpkg installed, everything is managed manually.
+__Programs 'apt' and 'dpkg' currently is not available (they will be available after release 3.7).__
 
 ## Features
 * __Development tools:__ clang, gcc, go, perl, python 2 & 3, ruby, rust
