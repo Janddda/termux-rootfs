@@ -68,34 +68,33 @@ int main(int argc, char *argv[]) {
     const char *passwd_file_path = "/data/data/com.termux/files/usr/etc/login.pwd";
 
     if ((output = (unsigned char *)malloc(length * sizeof(char))) == NULL) {
-        puts("Failed to allocate memory.\n");
+        puts("Failed to allocate memory.");
         return 1;
     }
 
-    puts("");
-    password = getpass("Enter new password: ");
+    password = getpass("New password: ");
     puts("");
 
     if(password == NULL) {
-        puts("Failed to read password input.\n");
+        puts("Failed to read password input.");
         return 1;
     }
 
     if(strlen(password) < 8) {
-        puts("Minimum password size is 8 characters.\n");
+        puts("Minimum password size is 8 characters.");
         return 1;
     }
 
-    password_confirmation = getpass("Enter new password again: ");
+    password_confirmation = getpass("Retype new password: ");
     puts("");
 
     if(password_confirmation == NULL) {
-        puts("Failed to read password input.\n");
+        puts("Failed to read password input.");
         return 1;
     }
 
     if(strcmp(password, password_confirmation) != 0) {
-        puts("Entered passwords are different, exiting.\n");
+        puts("Sorry, passwords do not match.");
         return 1;
     }
 
@@ -107,7 +106,7 @@ int main(int argc, char *argv[]) {
         fclose(passwd_file);
 
         if (w == 0) {
-            puts("Failed to write output to login.pwd.\n");
+            puts("Failed to write output to login.pwd.");
             return 1;
         }
 
@@ -115,11 +114,11 @@ int main(int argc, char *argv[]) {
         // 384 = -rw------- (600)
         chmod(passwd_file_path, 384);
 
-        puts("New password was successfully set.\n");
+        puts("New password was successfully set.");
         return 0;
     }
     else {
-        puts("Failed to open login.pwd for writing.\n");
+        puts("Failed to open login.pwd for writing.");
         return 1;
     }
 

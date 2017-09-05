@@ -36,14 +36,14 @@
 #include <readline/readline.h>
 #include <openssl/evp.h>
 
+#define LOGIN_BANNER_PATH "/data/data/com.termux/files/usr/etc/login-banner.txt"
 #define MOTD_PATH "/data/data/com.termux/files/usr/etc/motd"
 #define DYN_MOTD_PATH "/data/data/com.termux/files/usr/etc/motd.dyn"
 
-void show_motd() {
-    const char *motd_path = MOTD_PATH;
+void show_banner(const char *banner_path) {
     FILE *file;
 
-    if ((file = fopen(motd_path, "r")) != NULL) {
+    if ((file = fopen(banner_path, "r")) != NULL) {
         char *buffer = NULL;
         size_t len = 0;
         ssize_t chars_read = 0;
@@ -60,17 +60,8 @@ void show_motd() {
     }
 }
 
-void show_dynamic_motd() {
-    const char *motd_path = DYN_MOTD_PATH;
-
-    if (access(motd_path, R_OK | X_OK) == 0) {
-        system(motd_path);
-    }
-}
-
 char* getpass(const char *prompt) {
     struct termios term_old, term_new;
-    int nread;
 
     /* Turn echoing off and fail if we can't. */
     if (tcgetattr (0, &term_old) != 0) {
@@ -97,40 +88,35 @@ void userlogin() {
     char link_data[1024];
     char *shell;
 
+#ifdef SHOW_STATIC_MOTD
+    if (access(MOTD_PATH, R_OK) == 0) {
+        show_banner(MOTD_PATH);
+    }
+#endif
+
+#ifdef SHOW_DYNAMIC_MOTD
+    if (access(DYN_MOTD_PATH, R_OK | X_OK) == 0) {
+        system(DYN_MOTD_PATH);
+    }
+#endif
+
     if(access("/data/data/com.termux/files/home/.termux/shell", F_OK) == 0) {
         ssize_t len = readlink("/data/data/com.termux/files/home/.termux/shell",
                                link_data, sizeof(link_data)-1);
 
         if(len != -1) {
             link_data[len] = '\0';
-            shell = basename(link_data);
+            shell = link_data;
         }
         else {
-            shell = "bash";
+            shell = "/data/data/com.termux/files/usr/bin/bash";
         }
     }
     else {
-        shell = "bash";
+        shell = "/data/data/com.termux/files/usr/bin/bash";
     }
 
-    if(strcmp(shell, "bash") == 0) {
-        execl("/data/data/com.termux/files/usr/bin/bash", "bash", "-l", (char *) 0);
-    }
-    else if(strcmp(shell, "dash") == 0) {
-        execl("/data/data/com.termux/files/usr/bin/dash", "dash", "-l", (char *) 0);
-    }
-    else if(strcmp(shell, "sh") == 0) {
-        execl("/data/data/com.termux/files/usr/bin/sh", "sh", "-l", (char *) 0);
-    }
-    else if(strcmp(shell, "termux-chroot") == 0) {
-        execl("/data/data/com.termux/files/usr/bin/termux-chroot", "termux-chroot", (char *) 0);
-    }
-    else if(strcmp(shell, "zsh") == 0) {
-        execl("/data/data/com.termux/files/usr/bin/zsh", "zsh", "-l", (char *) 0);
-    }
-    else {
-        execl("/data/data/com.termux/files/usr/bin/bash", "bash", "-l", (char *) 0);
-    }
+    execl(shell, "-", (char *) 0);
 }
 
 int main(int argc, char *argv[]) {
@@ -145,21 +131,15 @@ int main(int argc, char *argv[]) {
     FILE *passwd_file = NULL;
     const char *passwd_file_path = "/data/data/com.termux/files/usr/etc/login.pwd";
 
-#ifdef SHOW_STATIC_MOTD
-    if (access(MOTD_PATH, F_OK) == 0) {
-        show_motd();
-    }
-#endif
-
-#ifdef SHOW_DYNAMIC_MOTD
-    if (access(DYN_MOTD_PATH, F_OK) == 0) {
-        show_dynamic_motd();
+#ifdef SHOW_LOGIN_BANNER
+    if (access(LOGIN_BANNER_PATH, R_OK) == 0) {
+        show_banner(LOGIN_BANNER_PATH);
     }
 #endif
 
     if (access(passwd_file_path, F_OK) != 0) {
 #ifdef WARN_IF_PASSWD_NOT_SET
-        puts("\nLooks like the login password is not set.");
+        puts("Looks like the login password is not set.");
         puts("Please, set it with command 'passwd'.\n");
 #endif
         userlogin(progname);
@@ -181,7 +161,6 @@ int main(int argc, char *argv[]) {
             return 1;
         }
 
-        puts("");
         login_password = getpass("Enter password: ");
         puts("");
 
