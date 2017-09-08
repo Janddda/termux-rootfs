@@ -2,8 +2,6 @@
 This is a static root filesystem for [Termux](https://github.com/termux/termux-app) (AArch64). It is based on packages from [official termux repository](http://termux.net) and some
 advanced software. It's working on Samsung Galaxy S7, but no guarantee that it will work on other devices.
 
-__Programs 'apt' and 'dpkg' currently is not available (they will be available after release 3.7).__
-
 ## Features
 * __Development tools:__ clang, gcc, go, perl, python 2 & 3, ruby, rust
 * __Emulators:__ qemu-i386-static, qemu-x86_64-static, riscvemu
@@ -65,8 +63,8 @@ To remove password login, delete file '__$PREFIX/etc/login.pwd__'.
 ## Available software
 __admin tools:__
 ```
-  bmon, cpulimit, debootstrap, dnsutils, fsmon, geoip, httping, hping3, iproute2,
-  iperf3, iw, macchanger, ngrep, nmap, proot, pwgen, ranpwd, sensors, sslscan,
+  apt, bmon, cpulimit, debootstrap, dnsutils, dpkg, fsmon, geoip, htop, httping, hping3,
+  iproute2, iperf3, iw, macchanger, ngrep, nmap, proot, pwgen, ranpwd, sensors, sslscan,
   sipcalc, tracepath, whois, wireless-tools
 ```
 __android:__
@@ -144,7 +142,7 @@ __libraries:__
 ```
 __media:__
 ```
-  dcraw, ffmpeg, figlet, imagemagick, optipng, play-audio, tesseract, toilet
+  dcraw, ffmpeg, figlet, graphicsmagick, optipng, play-audio, tesseract, toilet
 ```
 __misc:__
 ```
@@ -186,7 +184,7 @@ __python 3 modules:__
 ```
 __servers:__
 ```
-  nginx, openssh, polipo, privoxy, tor, transfer.sh
+  nginx, openssh, polipo, privoxy, stunnel, tor, transfer.sh
 ```
 __special/custom:__
 ```
