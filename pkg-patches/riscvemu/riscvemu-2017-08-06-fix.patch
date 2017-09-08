@@ -1,0 +1,61 @@
+diff -uNr riscvemu-2017-08-06/Makefile riscvemu-2017-08-06.mod/Makefile
+--- riscvemu-2017-08-06/Makefile	2017-08-06 15:30:12.000000000 +0300
++++ riscvemu-2017-08-06.mod/Makefile	2017-09-07 14:56:51.446627565 +0300
+@@ -26,7 +26,7 @@
+ # (openssl) must be installed.
+ CONFIG_FS_NET=y
+ # SDL support (optional)
+-CONFIG_SDL=y
++#CONFIG_SDL=y
+ # if set, compile the 128 bit emulator. Note: the 128 bit target does
+ # not compile if gcc does not support the int128 type (32 bit hosts).
+ CONFIG_INT128=y
+@@ -46,7 +46,7 @@
+ endif
+ CC=$(CROSS_PREFIX)gcc
+ STRIP=$(CROSS_PREFIX)strip
+-CFLAGS=-O2 -Wall -g -Werror -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -MMD
++CFLAGS=-O2 -Wall -g -D_FILE_OFFSET_BITS=64 -D_LARGEFILE_SOURCE -MMD
+ CFLAGS+=-D_GNU_SOURCE -DCONFIG_VERSION=\"$(shell cat VERSION)\"
+ LDFLAGS=
+ 
+@@ -63,7 +63,7 @@
+ ifndef CONFIG_WIN32
+ PROGS+=riscvemu
+ ifdef CONFIG_FS_NET
+-PROGS+=build_filelist splitimg
++PROGS+=splitimg
+ endif
+ endif
+ 
+diff -uNr riscvemu-2017-08-06/fs.h riscvemu-2017-08-06.mod/fs.h
+--- riscvemu-2017-08-06/fs.h	2017-08-06 15:30:12.000000000 +0300
++++ riscvemu-2017-08-06.mod/fs.h	2017-09-07 14:54:07.826627682 +0300
+@@ -109,6 +109,16 @@
+     uint64_t path;
+ } FSQID;
+ 
++#ifdef st_atime_nsec
++#undef st_atime_nsec
++#endif
++#ifdef st_mtime_nsec
++#undef st_mtime_nsec
++#endif
++#ifdef st_ctime_nsec
++#undef st_ctime_nsec
++#endif
++
+ typedef struct {
+     FSQID qid;
+     uint32_t st_mode;
+diff -uNr riscvemu-2017-08-06/virtio.h riscvemu-2017-08-06.mod/virtio.h
+--- riscvemu-2017-08-06/virtio.h	2017-08-06 15:30:12.000000000 +0300
++++ riscvemu-2017-08-06.mod/virtio.h	2017-09-07 14:54:47.976627654 +0300
+@@ -24,6 +24,7 @@
+ #ifndef VIRTIO_H
+ #define VIRTIO_H
+ 
++#include <sys/select.h>
+ #include "iomem.h"
+ #include "pci.h"
+ 
