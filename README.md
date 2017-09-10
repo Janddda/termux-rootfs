@@ -112,7 +112,7 @@ __encryption:__
 ```
 __filesystem:__
 ```
-  btrfs-progs, duff, e2fsprogs, exfat-utils, squashfs-tools, zerofree
+  btrfs-progs, duff, e2fsprogs, exfat-utils, lvm2, squashfs-tools, zerofree
 ```
 __games:__
 ```
