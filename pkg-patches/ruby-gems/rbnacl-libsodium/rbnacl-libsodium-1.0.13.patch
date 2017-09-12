@@ -1,0 +1,313 @@
+diff -uNr rbnacl-libsodium-1.0.13/rbnacl-libsodium.gemspec rbnacl-libsodium-1.0.13.mod/rbnacl-libsodium.gemspec
+--- rbnacl-libsodium-1.0.13/rbnacl-libsodium.gemspec	2017-09-11 15:22:25.765963170 +0300
++++ rbnacl-libsodium-1.0.13.mod/rbnacl-libsodium.gemspec	2017-09-11 15:23:40.965963116 +0300
+@@ -19,8 +19,8 @@
+ 
+   spec.extensions    = ['ext/rbnacl/extconf.rb']
+ 
+-  spec.add_runtime_dependency "rbnacl", ">= 3.0.1"
++  spec.add_runtime_dependency "rbnacl", "~> 3.0", ">= 3.0.1"
+ 
+   spec.add_development_dependency "bundler", "~> 1.5"
+-  spec.add_development_dependency "rake", ">= 10"
++  spec.add_development_dependency "rake", "~> 10"
+ end
+diff -uNr rbnacl-libsodium-1.0.13/vendor/libsodium/build-aux/compile rbnacl-libsodium-1.0.13.mod/vendor/libsodium/build-aux/compile
+--- rbnacl-libsodium-1.0.13/vendor/libsodium/build-aux/compile	2017-09-11 15:22:25.905963170 +0300
++++ rbnacl-libsodium-1.0.13.mod/vendor/libsodium/build-aux/compile	2017-09-11 15:23:03.015963143 +0300
+@@ -1,4 +1,4 @@
+-#! /bin/sh
++#!/data/data/com.termux/files/usr/bin/sh
+ # Wrapper for compilers which do not understand '-c -o'.
+ 
+ scriptversion=2016-01-11.22; # UTC
+diff -uNr rbnacl-libsodium-1.0.13/vendor/libsodium/build-aux/config.guess rbnacl-libsodium-1.0.13.mod/vendor/libsodium/build-aux/config.guess
+--- rbnacl-libsodium-1.0.13/vendor/libsodium/build-aux/config.guess	2017-09-11 15:22:25.925963170 +0300
++++ rbnacl-libsodium-1.0.13.mod/vendor/libsodium/build-aux/config.guess	2017-09-11 15:23:15.745963134 +0300
+@@ -1,8 +1,8 @@
+-#! /bin/sh
++#!/data/data/com.termux/files/usr/bin/sh
+ # Attempt to guess a canonical system name.
+-#   Copyright 1992-2017 Free Software Foundation, Inc.
++#   Copyright 1992-2016 Free Software Foundation, Inc.
+ 
+-timestamp='2017-05-27'
++timestamp='2016-09-11'
+ 
+ # This file is free software; you can redistribute it and/or modify it
+ # under the terms of the GNU General Public License as published by
+@@ -50,7 +50,7 @@
+ GNU config.guess ($timestamp)
+ 
+ Originally written by Per Bothner.
+-Copyright 1992-2017 Free Software Foundation, Inc.
++Copyright 1992-2016 Free Software Foundation, Inc.
+ 
+ This is free software; see the source for copying conditions.  There is NO
+ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+@@ -99,7 +99,7 @@
+ set_cc_for_build='
+ trap "exitcode=\$?; (rm -f \$tmpfiles 2>/dev/null; rmdir \$tmp 2>/dev/null) && exit \$exitcode" 0 ;
+ trap "rm -f \$tmpfiles 2>/dev/null; rmdir \$tmp 2>/dev/null; exit 1" 1 2 13 15 ;
+-: ${TMPDIR=/tmp} ;
++: ${TMPDIR=/data/data/com.termux/files/usr/tmp} ;
+  { tmp=`(umask 077 && mktemp -d "$TMPDIR/cgXXXXXX") 2>/dev/null` && test -n "$tmp" && test -d "$tmp" ; } ||
+  { test -n "$RANDOM" && tmp=$TMPDIR/cg$$-$RANDOM && (umask 077 && mkdir $tmp) ; } ||
+  { tmp=$TMPDIR/cg-$$ && (umask 077 && mkdir $tmp) && echo "Warning: creating insecure temp directory" >&2 ; } ||
+@@ -837,11 +837,10 @@
+ 	UNAME_PROCESSOR=`/usr/bin/uname -p`
+ 	case ${UNAME_PROCESSOR} in
+ 	    amd64)
+-		UNAME_PROCESSOR=x86_64 ;;
+-	    i386)
+-		UNAME_PROCESSOR=i586 ;;
++		echo x86_64-unknown-freebsd`echo ${UNAME_RELEASE}|sed -e 's/[-(].*//'` ;;
++	    *)
++		echo ${UNAME_PROCESSOR}-unknown-freebsd`echo ${UNAME_RELEASE}|sed -e 's/[-(].*//'` ;;
+ 	esac
+-	echo ${UNAME_PROCESSOR}-unknown-freebsd`echo ${UNAME_RELEASE}|sed -e 's/[-(].*//'`
+ 	exit ;;
+     i*:CYGWIN*:*)
+ 	echo ${UNAME_MACHINE}-pc-cygwin
+@@ -1001,9 +1000,6 @@
+ 	eval `$CC_FOR_BUILD -E $dummy.c 2>/dev/null | grep '^CPU'`
+ 	test x"${CPU}" != x && { echo "${CPU}-unknown-linux-${LIBC}"; exit; }
+ 	;;
+-    mips64el:Linux:*:*)
+-	echo ${UNAME_MACHINE}-unknown-linux-${LIBC}
+-	exit ;;
+     openrisc*:Linux:*:*)
+ 	echo or1k-unknown-linux-${LIBC}
+ 	exit ;;
+@@ -1304,21 +1300,14 @@
+ 	if test `echo "$UNAME_RELEASE" | sed -e 's/\..*//'` -le 10 ; then
+ 	    if [ "$CC_FOR_BUILD" != no_compiler_found ]; then
+ 		if (echo '#ifdef __LP64__'; echo IS_64BIT_ARCH; echo '#endif') | \
+-		       (CCOPTS="" $CC_FOR_BUILD -E - 2>/dev/null) | \
+-		       grep IS_64BIT_ARCH >/dev/null
++		    (CCOPTS="" $CC_FOR_BUILD -E - 2>/dev/null) | \
++		    grep IS_64BIT_ARCH >/dev/null
+ 		then
+ 		    case $UNAME_PROCESSOR in
+ 			i386) UNAME_PROCESSOR=x86_64 ;;
+ 			powerpc) UNAME_PROCESSOR=powerpc64 ;;
+ 		    esac
+ 		fi
+-		# On 10.4-10.6 one might compile for PowerPC via gcc -arch ppc
+-		if (echo '#ifdef __POWERPC__'; echo IS_PPC; echo '#endif') | \
+-		       (CCOPTS="" $CC_FOR_BUILD -E - 2>/dev/null) | \
+-		       grep IS_PPC >/dev/null
+-		then
+-		    UNAME_PROCESSOR=powerpc
+-		fi
+ 	    fi
+ 	elif test "$UNAME_PROCESSOR" = i386 ; then
+ 	    # Avoid executing cc on OS X 10.9, as it ships with a stub
+@@ -1342,18 +1331,15 @@
+     *:QNX:*:4*)
+ 	echo i386-pc-qnx
+ 	exit ;;
+-    NEO-*:NONSTOP_KERNEL:*:*)
++    NEO-?:NONSTOP_KERNEL:*:*)
+ 	echo neo-tandem-nsk${UNAME_RELEASE}
+ 	exit ;;
+     NSE-*:NONSTOP_KERNEL:*:*)
+ 	echo nse-tandem-nsk${UNAME_RELEASE}
+ 	exit ;;
+-    NSR-*:NONSTOP_KERNEL:*:*)
++    NSR-?:NONSTOP_KERNEL:*:*)
+ 	echo nsr-tandem-nsk${UNAME_RELEASE}
+ 	exit ;;
+-    NSX-*:NONSTOP_KERNEL:*:*)
+-	echo nsx-tandem-nsk${UNAME_RELEASE}
+-	exit ;;
+     *:NonStop-UX:*:*)
+ 	echo mips-compaq-nonstopux
+ 	exit ;;
+diff -uNr rbnacl-libsodium-1.0.13/vendor/libsodium/build-aux/config.sub rbnacl-libsodium-1.0.13.mod/vendor/libsodium/build-aux/config.sub
+--- rbnacl-libsodium-1.0.13/vendor/libsodium/build-aux/config.sub	2017-09-11 15:22:25.925963170 +0300
++++ rbnacl-libsodium-1.0.13.mod/vendor/libsodium/build-aux/config.sub	2017-09-11 15:23:15.705963134 +0300
+@@ -1,8 +1,8 @@
+-#! /bin/sh
++#!/data/data/com.termux/files/usr/bin/sh
+ # Configuration validation subroutine script.
+-#   Copyright 1992-2017 Free Software Foundation, Inc.
++#   Copyright 1992-2016 Free Software Foundation, Inc.
+ 
+-timestamp='2017-04-02'
++timestamp='2016-09-05'
+ 
+ # This file is free software; you can redistribute it and/or modify it
+ # under the terms of the GNU General Public License as published by
+@@ -67,7 +67,7 @@
+ version="\
+ GNU config.sub ($timestamp)
+ 
+-Copyright 1992-2017 Free Software Foundation, Inc.
++Copyright 1992-2016 Free Software Foundation, Inc.
+ 
+ This is free software; see the source for copying conditions.  There is NO
+ warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."
+@@ -263,7 +263,7 @@
+ 	| fido | fr30 | frv | ft32 \
+ 	| h8300 | h8500 | hppa | hppa1.[01] | hppa2.0 | hppa2.0[nw] | hppa64 \
+ 	| hexagon \
+-	| i370 | i860 | i960 | ia16 | ia64 \
++	| i370 | i860 | i960 | ia64 \
+ 	| ip2k | iq2000 \
+ 	| k1om \
+ 	| le32 | le64 \
+@@ -301,7 +301,6 @@
+ 	| open8 | or1k | or1knd | or32 \
+ 	| pdp10 | pdp11 | pj | pjl \
+ 	| powerpc | powerpc64 | powerpc64le | powerpcle \
+-	| pru \
+ 	| pyramid \
+ 	| riscv32 | riscv64 \
+ 	| rl78 | rx \
+@@ -315,7 +314,6 @@
+ 	| ubicom32 \
+ 	| v850 | v850e | v850e1 | v850e2 | v850es | v850e2v3 \
+ 	| visium \
+-	| wasm32 \
+ 	| we32k \
+ 	| x86 | xc16x | xstormy16 | xtensa \
+ 	| z8k | z80)
+@@ -389,7 +387,7 @@
+ 	| h8300-* | h8500-* \
+ 	| hppa-* | hppa1.[01]-* | hppa2.0-* | hppa2.0[nw]-* | hppa64-* \
+ 	| hexagon-* \
+-	| i*86-* | i860-* | i960-* | ia16-* | ia64-* \
++	| i*86-* | i860-* | i960-* | ia64-* \
+ 	| ip2k-* | iq2000-* \
+ 	| k1om-* \
+ 	| le32-* | le64-* \
+@@ -430,7 +428,6 @@
+ 	| orion-* \
+ 	| pdp10-* | pdp11-* | pj-* | pjl-* | pn-* | power-* \
+ 	| powerpc-* | powerpc64-* | powerpc64le-* | powerpcle-* \
+-	| pru-* \
+ 	| pyramid-* \
+ 	| riscv32-* | riscv64-* \
+ 	| rl78-* | romp-* | rs6000-* | rx-* \
+@@ -447,7 +444,6 @@
+ 	| v850-* | v850e-* | v850e1-* | v850es-* | v850e2-* | v850e2v3-* \
+ 	| vax-* \
+ 	| visium-* \
+-	| wasm32-* \
+ 	| we32k-* \
+ 	| x86-* | x86_64-* | xc16x-* | xps100-* \
+ 	| xstormy16-* | xtensa*-* \
+@@ -950,9 +946,6 @@
+ 	nsr-tandem)
+ 		basic_machine=nsr-tandem
+ 		;;
+-	nsx-tandem)
+-		basic_machine=nsx-tandem
+-		;;
+ 	op50n-* | op60c-*)
+ 		basic_machine=hppa1.1-oki
+ 		os=-proelf
+@@ -1248,9 +1241,6 @@
+ 		basic_machine=a29k-wrs
+ 		os=-vxworks
+ 		;;
+-	wasm32)
+-		basic_machine=wasm32-unknown
+-		;;
+ 	w65*)
+ 		basic_machine=w65-wdc
+ 		os=-none
+@@ -1405,7 +1395,7 @@
+ 	      | -bosx* | -nextstep* | -cxux* | -aout* | -elf* | -oabi* \
+ 	      | -ptx* | -coff* | -ecoff* | -winnt* | -domain* | -vsta* \
+ 	      | -udi* | -eabi* | -lites* | -ieee* | -go32* | -aux* \
+-	      | -chorusos* | -chorusrdb* | -cegcc* | -glidix* \
++	      | -chorusos* | -chorusrdb* | -cegcc* \
+ 	      | -cygwin* | -msys* | -pe* | -psos* | -moss* | -proelf* | -rtems* \
+ 	      | -midipix* | -mingw32* | -mingw64* | -linux-gnu* | -linux-android* \
+ 	      | -linux-newlib* | -linux-musl* | -linux-uclibc* \
+@@ -1417,7 +1407,7 @@
+ 	      | -morphos* | -superux* | -rtmk* | -rtmk-nova* | -windiss* \
+ 	      | -powermax* | -dnix* | -nx6 | -nx7 | -sei* | -dragonfly* \
+ 	      | -skyos* | -haiku* | -rdos* | -toppers* | -drops* | -es* \
+-	      | -onefs* | -tirtos* | -phoenix* | -fuchsia* | -redox*)
++	      | -onefs* | -tirtos* | -phoenix*)
+ 	# Remember, each alternative MUST END IN *, to match a version number.
+ 		;;
+ 	-qnx*)
+@@ -1646,9 +1636,6 @@
+ 	sparc-* | *-sun)
+ 		os=-sunos4.1.1
+ 		;;
+-	pru-*)
+-		os=-elf
+-		;;
+ 	*-be)
+ 		os=-beos
+ 		;;
+diff -uNr rbnacl-libsodium-1.0.13/vendor/libsodium/build-aux/depcomp rbnacl-libsodium-1.0.13.mod/vendor/libsodium/build-aux/depcomp
+--- rbnacl-libsodium-1.0.13/vendor/libsodium/build-aux/depcomp	2017-09-11 15:22:25.925963170 +0300
++++ rbnacl-libsodium-1.0.13.mod/vendor/libsodium/build-aux/depcomp	2017-09-11 15:23:03.135963143 +0300
+@@ -1,4 +1,4 @@
+-#! /bin/sh
++#!/data/data/com.termux/files/usr/bin/sh
+ # depcomp - compile a program generating dependencies as side-effects
+ 
+ scriptversion=2016-01-11.22; # UTC
+diff -uNr rbnacl-libsodium-1.0.13/vendor/libsodium/build-aux/install-sh rbnacl-libsodium-1.0.13.mod/vendor/libsodium/build-aux/install-sh
+--- rbnacl-libsodium-1.0.13/vendor/libsodium/build-aux/install-sh	2017-09-11 15:22:25.945963170 +0300
++++ rbnacl-libsodium-1.0.13.mod/vendor/libsodium/build-aux/install-sh	2017-09-11 15:23:03.155963143 +0300
+@@ -1,4 +1,4 @@
+-#!/bin/sh
++#!/data/data/com.termux/files/usr/bin/sh
+ # install - install a program, script, or datafile
+ 
+ scriptversion=2016-01-11.22; # UTC
+diff -uNr rbnacl-libsodium-1.0.13/vendor/libsodium/build-aux/ltmain.sh rbnacl-libsodium-1.0.13.mod/vendor/libsodium/build-aux/ltmain.sh
+--- rbnacl-libsodium-1.0.13/vendor/libsodium/build-aux/ltmain.sh	2017-09-11 15:22:25.945963170 +0300
++++ rbnacl-libsodium-1.0.13.mod/vendor/libsodium/build-aux/ltmain.sh	2017-09-11 15:23:03.285963143 +0300
+@@ -1,4 +1,4 @@
+-#! /bin/sh
++#!/data/data/com.termux/files/usr/bin/sh
+ ## DO NOT EDIT - This file generated from ./build-aux/ltmain.in
+ ##               by inline-source v2014-01-03.01
+ 
+diff -uNr rbnacl-libsodium-1.0.13/vendor/libsodium/build-aux/missing rbnacl-libsodium-1.0.13.mod/vendor/libsodium/build-aux/missing
+--- rbnacl-libsodium-1.0.13/vendor/libsodium/build-aux/missing	2017-09-11 15:22:25.945963170 +0300
++++ rbnacl-libsodium-1.0.13.mod/vendor/libsodium/build-aux/missing	2017-09-11 15:23:03.305963143 +0300
+@@ -1,4 +1,4 @@
+-#! /bin/sh
++#!/data/data/com.termux/files/usr/bin/sh
+ # Common wrapper for a few potentially missing GNU programs.
+ 
+ scriptversion=2016-01-11.22; # UTC
+diff -uNr rbnacl-libsodium-1.0.13/vendor/libsodium/build-aux/test-driver rbnacl-libsodium-1.0.13.mod/vendor/libsodium/build-aux/test-driver
+--- rbnacl-libsodium-1.0.13/vendor/libsodium/build-aux/test-driver	2017-09-11 15:22:25.945963170 +0300
++++ rbnacl-libsodium-1.0.13.mod/vendor/libsodium/build-aux/test-driver	2017-09-11 15:23:03.345963143 +0300
+@@ -1,4 +1,4 @@
+-#! /bin/sh
++#!/data/data/com.termux/files/usr/bin/sh
+ # test-driver - basic testsuite driver script.
+ 
+ scriptversion=2016-01-11.22; # UTC
+diff -uNr rbnacl-libsodium-1.0.13/vendor/libsodium/configure rbnacl-libsodium-1.0.13.mod/vendor/libsodium/configure
+--- rbnacl-libsodium-1.0.13/vendor/libsodium/configure	2017-09-11 15:22:25.985963170 +0300
++++ rbnacl-libsodium-1.0.13.mod/vendor/libsodium/configure	2017-09-11 15:24:11.975963094 +0300
+@@ -1,4 +1,4 @@
+-#! /bin/sh
++#!/data/data/com.termux/files/usr/bin/sh
+ # Guess values for system-dependent variables and create Makefiles.
+ # Generated by GNU Autoconf 2.69 for libsodium 1.0.13.
+ #
+@@ -2330,8 +2330,8 @@
+ ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ ac_compiler_gnu=$ac_cv_c_compiler_gnu
+ 
+-
+-ac_aux_dir=
++SHELL="/data/data/com.termux/files/usr/bin/sh"
++ac_aux_dir="./build-aux"
+ for ac_dir in build-aux "$srcdir"/build-aux; do
+   if test -f "$ac_dir/install-sh"; then
+     ac_aux_dir=$ac_dir

@@ -1,0 +1,28 @@
+diff -uNr tzinfo-1.2.3/lib/tzinfo/zoneinfo_data_source.rb tzinfo-1.2.3.mod/lib/tzinfo/zoneinfo_data_source.rb
+--- tzinfo-1.2.3/lib/tzinfo/zoneinfo_data_source.rb	2017-09-11 16:18:57.255960744 +0300
++++ tzinfo-1.2.3.mod/lib/tzinfo/zoneinfo_data_source.rb	2017-09-11 16:21:28.405960636 +0300
+@@ -74,10 +74,10 @@
+   # instead.
+   class ZoneinfoDataSource < DataSource
+     # The default value of ZoneinfoDataSource.search_path.
+-    DEFAULT_SEARCH_PATH = ['/usr/share/zoneinfo', '/usr/share/lib/zoneinfo', '/etc/zoneinfo'].freeze
++    DEFAULT_SEARCH_PATH = ['/data/data/com.termux/files/usr/share/zoneinfo', '/data/data/com.termux/files/usr/etc/zoneinfo', '/system/usr/share/zoneinfo'].freeze
+     
+     # The default value of ZoneinfoDataSource.alternate_iso3166_tab_search_path.
+-    DEFAULT_ALTERNATE_ISO3166_TAB_SEARCH_PATH = ['/usr/share/misc/iso3166.tab', '/usr/share/misc/iso3166'].freeze
++    DEFAULT_ALTERNATE_ISO3166_TAB_SEARCH_PATH = ['/data/data/com.termux/files/usr/share/misc/iso3166.tab', '/data/data/com.termux/files/usr/share/misc/iso3166'].freeze
+     
+     # Paths to be checked to find the system zoneinfo directory.
+     @@search_path = DEFAULT_SEARCH_PATH.dup
+diff -uNr tzinfo-1.2.3/test/tc_zoneinfo_data_source.rb tzinfo-1.2.3.mod/test/tc_zoneinfo_data_source.rb
+--- tzinfo-1.2.3/test/tc_zoneinfo_data_source.rb	2017-09-11 16:18:57.265960744 +0300
++++ tzinfo-1.2.3.mod/test/tc_zoneinfo_data_source.rb	2017-09-11 16:29:36.355960287 +0300
+@@ -27,7 +27,7 @@
+   end
+   
+   def test_default_search_path
+-    assert_equal(['/usr/share/zoneinfo', '/usr/share/lib/zoneinfo', '/etc/zoneinfo'], ZoneinfoDataSource.search_path)
++    assert_equal(['/data/data/com.termux/files/usr/share/zoneinfo', '/data/data/com.termux/files/usr/etc/zoneinfo', '/system/usr/share/zoneinfo'], ZoneinfoDataSource.search_path)
+     assert_equal(false, ZoneinfoDataSource.search_path.frozen?)
+   end
+   

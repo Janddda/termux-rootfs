@@ -1,0 +1,19 @@
+diff -uNr google-protobuf-3.4.0.2/ext/google/protobuf_c/upb.c google-protobuf-3.4.0.2.mod/ext/google/protobuf_c/upb.c
+--- google-protobuf-3.4.0.2/ext/google/protobuf_c/upb.c	2017-09-11 15:54:54.825961776 +0300
++++ google-protobuf-3.4.0.2.mod/ext/google/protobuf_c/upb.c	2017-09-11 15:58:12.655961634 +0300
+@@ -9135,13 +9135,13 @@
+ 
+ #ifdef UPB_DUMP_BYTECODE
+   {
+-    FILE *f = fopen("/tmp/upb-bytecode", "w");
++    FILE *f = fopen("/data/data/com.termux/files/usr/tmp/upb-bytecode", "w");
+     UPB_ASSERT(f);
+     dumpbc(g->bytecode, g->bytecode_end, stderr);
+     dumpbc(g->bytecode, g->bytecode_end, f);
+     fclose(f);
+ 
+-    f = fopen("/tmp/upb-bytecode.bin", "wb");
++    f = fopen("/data/data/com.termux/files/usr/tmp/upb-bytecode.bin", "wb");
+     UPB_ASSERT(f);
+     fwrite(g->bytecode, 1, g->bytecode_end - g->bytecode, f);
+     fclose(f);

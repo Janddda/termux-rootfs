@@ -1,0 +1,19 @@
+diff -uNr dnsruby-1.60.2/lib/dnsruby/hosts.rb dnsruby-1.60.2.mod/lib/dnsruby/hosts.rb
+--- dnsruby-1.60.2/lib/dnsruby/hosts.rb	2017-09-11 16:40:28.875959820 +0300
++++ dnsruby-1.60.2.mod/lib/dnsruby/hosts.rb	2017-09-11 16:41:34.065959774 +0300
+@@ -36,7 +36,7 @@
+       require 'win32/resolv'
+       DefaultFileName = Win32::Resolv.get_hosts_path
+     else
+-      DefaultFileName = '/etc/hosts'
++      DefaultFileName = '/data/data/com.termux/files/usr/etc/hosts'
+     end
+ 
+     # Creates a new Dnsruby::Hosts using +filename+ for its data source
+@@ -123,4 +123,4 @@
+       end
+     end
+   end
+-end
+\ No newline at end of file
++end

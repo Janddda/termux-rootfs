@@ -1,0 +1,28 @@
+diff -uNr railties-4.2.9/lib/rails/generators/rails/app/app_generator.rb railties-4.2.9.mod/lib/rails/generators/rails/app/app_generator.rb
+--- railties-4.2.9/lib/rails/generators/rails/app/app_generator.rb	2017-09-11 15:55:53.765961734 +0300
++++ railties-4.2.9.mod/lib/rails/generators/rails/app/app_generator.rb	2017-09-11 16:01:16.125961503 +0300
+@@ -321,15 +321,15 @@
+ 
+       def mysql_socket
+         @mysql_socket ||= [
+-          "/tmp/mysql.sock",                        # default
+-          "/var/run/mysqld/mysqld.sock",            # debian/gentoo
+-          "/var/tmp/mysql.sock",                    # freebsd
+-          "/var/lib/mysql/mysql.sock",              # fedora
+-          "/opt/local/lib/mysql/mysql.sock",        # fedora
+-          "/opt/local/var/run/mysqld/mysqld.sock",  # mac + darwinports + mysql
+-          "/opt/local/var/run/mysql4/mysqld.sock",  # mac + darwinports + mysql4
+-          "/opt/local/var/run/mysql5/mysqld.sock",  # mac + darwinports + mysql5
+-          "/opt/lampp/var/mysql/mysql.sock"         # xampp for linux
++          "/data/data/com.termux/files/usr/tmp/mysql.sock",                        # default
++          "/data/data/com.termux/files/usr/var/run/mysqld/mysqld.sock",            # debian/gentoo
++          "/data/data/com.termux/files/usr/var/tmp/mysql.sock",                    # freebsd
++          "/data/data/com.termux/files/usr/var/lib/mysql/mysql.sock",              # fedora
++          "/data/data/com.termux/files/usr/opt/local/lib/mysql/mysql.sock",        # fedora
++          "/data/data/com.termux/files/usr/opt/local/var/run/mysqld/mysqld.sock",  # mac + darwinports + mysql
++          "/data/data/com.termux/files/usr/opt/local/var/run/mysql4/mysqld.sock",  # mac + darwinports + mysql4
++          "/data/data/com.termux/files/usr/opt/local/var/run/mysql5/mysqld.sock",  # mac + darwinports + mysql5
++          "/data/data/com.termux/files/usr/opt/lampp/var/mysql/mysql.sock"         # xampp for linux
+         ].find { |f| File.exist?(f) } unless RbConfig::CONFIG['host_os'] =~ /mswin|mingw/
+       end
+ 

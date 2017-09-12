@@ -1,0 +1,48 @@
+diff -uNr googleauth-0.5.3/lib/googleauth/credentials_loader.rb googleauth-0.5.3.mod/lib/googleauth/credentials_loader.rb
+--- googleauth-0.5.3/lib/googleauth/credentials_loader.rb	2017-09-11 15:55:19.085961759 +0300
++++ googleauth-0.5.3.mod/lib/googleauth/credentials_loader.rb	2017-09-11 15:59:16.695961589 +0300
+@@ -108,7 +108,7 @@
+           return nil unless ENV['ProgramData']
+           prefix = File.join(ENV['ProgramData'], 'Google/Auth')
+         else
+-          prefix = '/etc/google/auth/'
++          prefix = '/data/data/com.termux/files/usr/etc/google/auth/'
+         end
+         path = File.join(prefix, CREDENTIALS_FILE_NAME)
+         return nil unless File.exist?(path)
+diff -uNr googleauth-0.5.3/spec/googleauth/get_application_default_spec.rb googleauth-0.5.3.mod/spec/googleauth/get_application_default_spec.rb
+--- googleauth-0.5.3/spec/googleauth/get_application_default_spec.rb	2017-09-11 15:55:19.085961759 +0300
++++ googleauth-0.5.3.mod/spec/googleauth/get_application_default_spec.rb	2017-09-11 15:59:37.765961573 +0300
+@@ -134,7 +134,7 @@
+     it 'succeeds with system default file' do
+       ENV.delete(@var_name) unless ENV[@var_name].nil?
+       FakeFS do
+-        key_path = File.join('/etc/google/auth/', CREDENTIALS_FILE_NAME)
++        key_path = File.join('/data/data/com.termux/files/usr/etc/google/auth/', CREDENTIALS_FILE_NAME)
+         FileUtils.mkdir_p(File.dirname(key_path))
+         File.write(key_path, cred_json_text)
+         expect(Google::Auth.get_application_default(@scope, options))
+diff -uNr googleauth-0.5.3/spec/googleauth/service_account_spec.rb googleauth-0.5.3.mod/spec/googleauth/service_account_spec.rb
+--- googleauth-0.5.3/spec/googleauth/service_account_spec.rb	2017-09-11 15:55:19.085961759 +0300
++++ googleauth-0.5.3.mod/spec/googleauth/service_account_spec.rb	2017-09-11 15:59:43.595961569 +0300
+@@ -243,7 +243,7 @@
+   describe '#from_system_default_path' do
+     before(:example) do
+       @scope = 'https://www.googleapis.com/auth/userinfo.profile'
+-      @path = File.join('/etc/google/auth/', CREDENTIALS_FILE_NAME)
++      @path = File.join('/data/data/com.termux/files/usr/etc/google/auth/', CREDENTIALS_FILE_NAME)
+       @clz = ServiceAccountCredentials
+     end
+ 
+diff -uNr googleauth-0.5.3/spec/googleauth/user_refresh_spec.rb googleauth-0.5.3.mod/spec/googleauth/user_refresh_spec.rb
+--- googleauth-0.5.3/spec/googleauth/user_refresh_spec.rb	2017-09-11 15:55:19.095961759 +0300
++++ googleauth-0.5.3.mod/spec/googleauth/user_refresh_spec.rb	2017-09-11 15:59:32.445961577 +0300
+@@ -196,7 +196,7 @@
+   describe '#from_system_default_path' do
+     before(:example) do
+       @scope = 'https://www.googleapis.com/auth/userinfo.profile'
+-      @path = File.join('/etc/google/auth/', CREDENTIALS_FILE_NAME)
++      @path = File.join('/data/data/com.termux/files/usr/etc/google/auth/', CREDENTIALS_FILE_NAME)
+       @clz = UserRefreshCredentials
+     end
+ 

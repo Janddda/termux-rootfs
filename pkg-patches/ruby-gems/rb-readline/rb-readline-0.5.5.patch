@@ -1,0 +1,12 @@
+diff -uNr rb-readline-0.5.5/lib/rbreadline.rb rb-readline-0.5.5.mod/lib/rbreadline.rb
+--- rb-readline-0.5.5/lib/rbreadline.rb	2017-09-11 16:40:10.995959833 +0300
++++ rb-readline-0.5.5.mod/lib/rbreadline.rb	2017-09-11 16:46:04.745959580 +0300
+@@ -38,7 +38,7 @@
+   MB_LEN_MAX = 4
+ 
+   DEFAULT_INPUTRC = "~/.inputrc"
+-  SYS_INPUTRC = "/etc/inputrc"
++  SYS_INPUTRC = "/data/data/com.termux/files/usr/etc/inputrc"
+ 
+   UpCase = 1
+   DownCase = 2

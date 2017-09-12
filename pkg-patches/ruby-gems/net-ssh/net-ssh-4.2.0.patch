@@ -1,0 +1,24 @@
+diff -uNr net-ssh-4.2.0/lib/net/ssh/config.rb net-ssh-4.2.0.mod/lib/net/ssh/config.rb
+--- net-ssh-4.2.0/lib/net/ssh/config.rb	2017-09-11 16:39:47.145959850 +0300
++++ net-ssh-4.2.0.mod/lib/net/ssh/config.rb	2017-09-11 16:44:31.725959647 +0300
+@@ -39,7 +39,7 @@
+   # option to Net::SSH.start. (They are, by default.)
+   class Config
+     class << self
+-      @@default_files = %w(~/.ssh/config /etc/ssh_config /etc/ssh/ssh_config)
++      @@default_files = %w(~/.ssh/config /data/data/com.termux/files/usr/etc/ssh_config /data/data/com.termux/files/usr/etc/ssh/ssh_config)
+       # The following defaults follow the openssh client ssh_config defaults.
+       # http://lwn.net/Articles/544640/
+       # "hostbased" is off and "none" is not supported but we allow it since
+diff -uNr net-ssh-4.2.0/lib/net/ssh/known_hosts.rb net-ssh-4.2.0.mod/lib/net/ssh/known_hosts.rb
+--- net-ssh-4.2.0/lib/net/ssh/known_hosts.rb	2017-09-11 16:39:47.155959850 +0300
++++ net-ssh-4.2.0.mod/lib/net/ssh/known_hosts.rb	2017-09-11 16:44:21.595959654 +0300
+@@ -81,7 +81,7 @@
+         end
+ 
+         if which == :all || which == :global
+-          files += Array(options[:global_known_hosts_file] || %w(/etc/ssh/ssh_known_hosts /etc/ssh/ssh_known_hosts2))
++          files += Array(options[:global_known_hosts_file] || %w(/data/data/com.termux/files/usr/etc/ssh/ssh_known_hosts /data/data/com.termux/files/usr/etc/ssh/ssh_known_hosts2))
+         end
+ 
+         return files
