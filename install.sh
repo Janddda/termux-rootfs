@@ -3,7 +3,7 @@
 ##    Termux RootFS installer
 ##
 
-if [[ $(busybox uname -m) != aarch64 ]]; then
+if [ "$(busybox uname -m)" != "aarch64" ]; then
     echo ""
     echo "Sorry, only AArch64 CPU architecture is supported."
     echo ""
