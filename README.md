@@ -131,21 +131,22 @@ __generic utilities:__
 ```
 __libraries:__
 ```
-  boost, cairo, c-ares, db, expat, fftw, flac, fontconfig, freetype, gdbm,
-  glib, gnutls, harfbuzz, harfbuzz-icu, icu, imlib2, libandroid-glob,
-  libandroid-shmem, libandroid-support, libcaca, libconfig, libconfuse,
-  libclang, libcroco, libcrypt, libcryptopp, libcurl, libedit, libevent,
-  libffi, libgcrypt, libgd, libgit2, libidn, libisl, libjansson, libjasper,
-  libjpeg-turbo, libmp3lame, libmpc, libmpfr, libnet, libnl, libnpth,
-  libogg, libpcap, libpcre, libpipeline, libpng, libpopt, libqrencode,
-  librsync, libsodium, libssh, libssh2, libtalloc, libtiff, libunistring,
-  libutil, libuuid, libvorbis, libx264, libx265, libxml2, libxslt, libzmq,
-  libzopfli, ldns, leptonica, littlecms, miniupnpc, ncurses, nettle, nghttp2,
-  openblas, openjpeg, openssl, opus, pango, poppler, readline, c-toxcore, zlib
+  apr, apr-util, boost, cairo, c-ares, db, expat, fftw, flac, fontconfig,
+  freetype, gdbm, glib, gnutls, harfbuzz, harfbuzz-icu, icu, imlib2,
+  libandroid-glob, libandroid-shmem, libandroid-support, libcaca, libconfig,
+  libconfuse, libclang, libcroco, libcrypt, libcryptopp, libcurl, libedit,
+  libevent, libffi, libgcrypt, libgd, libgit2, libgrpc, libid3tag, libidn,
+  libisl, libjansson, libjasper, libjpeg-turbo, libmad, libmp3lame, libmpc,
+  libmpfr, libnet, libnl, libnpth, libogg, libpcap, libpcre, libpipeline,
+  libpng, libpopt, libprotobuf, libqrencode, librsync, libsodium, libssh,
+  libssh2, libtalloc, libtiff, libunistring, libutil, libuuid, libvorbis,
+  libx264, libx265, libxml2, libxslt, libyaml, libzmq, libzopfli, ldns,
+  leptonica, littlecms, miniupnpc, ncurses, nettle, nghttp2, openblas,
+  openjpeg, openssl, opus, pango, poppler, readline, c-toxcore, zlib
 ```
 __media:__
 ```
-  dcraw, ffmpeg, figlet, graphicsmagick, optipng, play-audio, tesseract, toilet
+  dcraw, ffmpeg, figlet, graphicsmagick, optipng, play-audio, sox, tesseract, toilet
 ```
 __misc:__
 ```
@@ -160,7 +161,8 @@ __networking:__
 ```
 __pentesting & cracking:__
 ```
-  aircrack-ng, bettercap, fcrackzip, hydra, john, mdk3, pkcrack, reaver
+  aircrack-ng, bettercap, fcrackzip, hydra, john, mdk3, metasploit-framework,
+  pkcrack, reaver
 ```
 __python 3 modules:__
 ```
