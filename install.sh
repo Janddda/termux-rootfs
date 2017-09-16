@@ -136,7 +136,7 @@ fi
 
 if [ ! -e "${BASEDIR}/${ROOTFS_DIR}" ]; then
     echo -n "[*] Extracting data (may take several minutes)... "
-    if ! tar jxf "${ARCHIVE_PATH}" -C "${BASEDIR}" > /dev/null 2>&1; then
+    if ! tar xf "${ARCHIVE_PATH}" -C "${BASEDIR}" > /dev/null 2>&1; then
         echo "FAIL"
         exit 1
     else
