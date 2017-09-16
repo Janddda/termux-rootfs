@@ -87,7 +87,11 @@ NEEDED_PACKAGES=""
 
 for bin in bash bzip2 coreutils tar wget xz; do
     if ! is_binary_installed "${bin}"; then
-        NEEDED_PACKAGES="${NEEDED_PACKAGES} ${bin}"
+        if [ "${bin}" = "xz" ]; then
+            NEEDED_PACKAGES="${NEEDED_PACKAGES} xz-utils"
+        else
+            NEEDED_PACKAGES="${NEEDED_PACKAGES} ${bin}"
+        fi
     fi
 done
 
