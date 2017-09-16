@@ -27,6 +27,7 @@ advanced software. It's working on Samsung Galaxy S7, but no guarantee that it w
 * __git__
 * __tar__
 * __wget__
+* __xz-utils__
 
 For optimal experience, you need to use the following modified Termux apps:
 * [Termux](https://github.com/xeffyr/termux-app) (Termux:Boot, Termux:Styling, Termux:Widget are integrated)

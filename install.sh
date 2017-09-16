@@ -84,7 +84,7 @@ fi
 
 NEEDED_PACKAGES=""
 
-for bin in bash bzip2 coreutils tar wget; do
+for bin in bash bzip2 coreutils tar wget xz; do
     if ! is_binary_installed "${bin}"; then
         NEEDED_PACKAGES="${NEEDED_PACKAGES} ${bin}"
     fi
@@ -95,7 +95,7 @@ if [ ! -z "${NEEDED_PACKAGES}" ]; then
         echo "[*] Installing packages..."
         apt install ${NEEDED_PACKAGES}
 
-        for bin in bash bzip2 coreutils tar wget; do
+        for bin in bash bzip2 coreutils tar wget xz; do
             if ! is_binary_installed ${bin}; then
                 echo "[!] Cannot find binary '${bin}'"
                 exit 1
