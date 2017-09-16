@@ -28,12 +28,13 @@ if [ ! -f "${SCRIPT_DIR}/VERSION_INFO" ]; then
 fi
 
 ## VERSION_INFO contains the following variables:
-##   LATEST_VERSION, ARCHIVE_SHA256, ENABLE_INC_UPDATES, UPDATES_SCHEME
+##   LATEST_VERSION, ARCHIVE_SHA256, ARCHIVE_COMP, ENABLE_INC_UPDATES,
+##   UPDATES_SCHEME
 . "${SCRIPT_DIR}"/VERSION_INFO
 
 BASEDIR="/data/data/com.termux/files"
 
-ARCHIVE_NAME="termux-rootfs-v${LATEST_VERSION}.tar.bz2"
+ARCHIVE_NAME="termux-rootfs-v${LATEST_VERSION}.tar.${ARCHIVE_COMP}"
 ARCHIVE_PATH="${BASEDIR}/${ARCHIVE_NAME}"
 ARCHIVE_URL="https://github.com/xeffyr/termux-rootfs/releases/download/v${LATEST_VERSION}/${ARCHIVE_NAME}"
 

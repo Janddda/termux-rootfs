@@ -2,10 +2,13 @@
 ##    Shell script that provides version info
 ##
 
-LATEST_VERSION="3.8"
+LATEST_VERSION="3.9"
 
 ## SHA-256 checksum for latest archive
-ARCHIVE_SHA256="52adad9961eb61adc404ab8cba9861243b3f7e36dc1b67323b165245857b667d"
+ARCHIVE_SHA256="48dc273dc030f5660f09a9e0966b1232bac2866b69ee691cf8a0f49006fac964"
+
+## Archive compression (bz2 or xz)
+ARCHIVE_COMP="bz2"
 
 ## Whether to enable incremental updates
 ENABLE_INC_UPDATES="yes"
@@ -22,4 +25,5 @@ read -d '' UPDATES_SCHEME << EOF
 3.5:3.6:767b396f485c289a7e81a859014bf347eda1ada41e105e6c126a835bdd28e74f
 3.6:3.7:2cc8f0d4c8f796a99c054ce3242c310fe07b6d080fbfef52743298a3b1e5b4cc
 3.7:3.8:defb35071a683931b993a073bb1c2e464e53ce717bb5a994fec7593c144aec81
+3.8:3.9:c53a239f12693c49bc309c084dcd7f9f64979fc3836c09978edaa5402ee0c824
 EOF
