@@ -72,7 +72,7 @@ __admin tools:__
 ```
 __android:__
 ```
-  adb, apk-utils, bootimg-tools, fastboot, resetprop, sdat2img, sparse-image-tools,
+  adb, apktool, apk-utils, bootimg-tools, fastboot, resetprop, sdat2img, sparse-image-tools,
   termux-api
 ```
 __archivers/compressors:__
@@ -106,8 +106,8 @@ __development:__
   astyle, autoconf, automake, bash-bats, binutils, bison, cargo, cccc, cfr,
   cgdb, cmake, clang, cppi, cpplint, cproto, cscope, ctags, diff2html,
   diffstat, ecj, elfutils, expect, flex, indent, jack, gcc, gdb, go, gperf,
-  llvm, ltrace, lua, m4, make, nodejs, patchelf, perl, python2, python3, ruby,
-  rust, tcl, texinfo, unifdef, valac, yasm
+  llvm, ltrace, lua, m4, make, nodejs, openjdk7-jre, patchelf, perl, python2,
+  python3, ruby, rust, tcl, texinfo, unifdef, valac, yasm
 ```
 __encryption:__
 ```
