@@ -1,0 +1,93 @@
+From 0557ed353fa9228d182e41613acccc867beac56c Mon Sep 17 00:00:00 2001
+From: Leonid Plyushch <leonid.plyushch@gmail.com>
+Date: Mon, 25 Sep 2017 20:04:46 +0300
+Subject: [PATCH] compatibility with Termux
+
+---
+ .../java/brut/androlib/res/AndrolibResources.java  | 42 +++-------------------
+ 1 file changed, 5 insertions(+), 37 deletions(-)
+
+diff --git a/brut.apktool/apktool-lib/src/main/java/brut/androlib/res/AndrolibResources.java b/brut.apktool/apktool-lib/src/main/java/brut/androlib/res/AndrolibResources.java
+index daa6711f..973096c3 100644
+--- a/brut.apktool/apktool-lib/src/main/java/brut/androlib/res/AndrolibResources.java
++++ b/brut.apktool/apktool-lib/src/main/java/brut/androlib/res/AndrolibResources.java
+@@ -310,7 +310,6 @@ final public class AndrolibResources {
+     public void aaptPackage(File apkFile, File manifest, File resDir, File rawDir, File assetDir, File[] include)
+             throws AndrolibException {
+ 
+-        boolean customAapt = false;
+         String aaptPath = apkOptions.aaptPath;
+         List<String> cmd = new ArrayList<String>();
+ 
+@@ -320,26 +319,16 @@ final public class AndrolibResources {
+             if (aaptFile.canRead() && aaptFile.exists()) {
+                 aaptFile.setExecutable(true);
+                 cmd.add(aaptFile.getPath());
+-                customAapt = true;
+ 
+                 if (apkOptions.verbose) {
+                     LOGGER.info(aaptFile.getPath() + " being used as aapt location.");
+                 }
+             } else {
+-                LOGGER.warning("aapt location could not be found. Defaulting back to default");
+-
+-                try {
+-                    cmd.add(getAaptBinaryFile().getAbsolutePath());
+-                } catch (BrutException ignored) {
+-                    cmd.add("aapt");
+-                }
++                LOGGER.warning("aapt location could not be found. Using default.");
++                cmd.add("/data/data/com.termux/files/usr/bin/aapt");
+             }
+         } else {
+-            try {
+-                cmd.add(getAaptBinaryFile().getAbsolutePath());
+-            } catch (BrutException ignored) {
+-                cmd.add("aapt");
+-            }
++            cmd.add("/data/data/com.termux/files/usr/bin/aapt");
+         }
+ 
+         cmd.add("p");
+@@ -353,12 +342,6 @@ final public class AndrolibResources {
+         if (apkOptions.debugMode) { // inject debuggable="true" into manifest
+             cmd.add("--debug-mode");
+         }
+-        // force package id so that some frameworks build with correct id
+-        // disable if user adds own aapt (can't know if they have this feature)
+-        if (mPackageId != null && ! customAapt && ! mSharedLibrary) {
+-            cmd.add("--forced-package-id");
+-            cmd.add(mPackageId);
+-        }
+         if (mSharedLibrary) {
+             cmd.add("--shared-lib");
+         }
+@@ -729,23 +712,8 @@ final public class AndrolibResources {
+         if (apkOptions.frameworkFolderLocation != null) {
+             path = apkOptions.frameworkFolderLocation;
+         } else {
+-            File parentPath = new File(System.getProperty("user.home"));
+-            if (! parentPath.canWrite()) {
+-                LOGGER.severe(String.format("WARNING: Could not write to $HOME (%s), using %s instead...",
+-                        parentPath.getAbsolutePath(), System.getProperty("java.io.tmpdir")));
+-                LOGGER.severe("Please be aware this is a volatile directory and frameworks could go missing, " +
+-                        "please utilize --frame-path if the default storage directory is unavailable");
+-
+-                parentPath = new File(System.getProperty("java.io.tmpdir"));
+-            }
+-
+-            if (OSDetection.isMacOSX()) {
+-                path = parentPath.getAbsolutePath() + String.format("%1$sLibrary%1$sapktool%1$sframework", File.separatorChar);
+-            } else if (OSDetection.isWindows()) {
+-                path = parentPath.getAbsolutePath() + String.format("%1$sAppData%1$sLocal%1$sapktool%1$sframework", File.separatorChar);
+-            } else {
+-                path = parentPath.getAbsolutePath() + String.format("%1$s.local%1$sshare%1$sapktool%1$sframework", File.separatorChar);
+-            }
++            File parentPath = new File("/data/data/com.termux/files/home");
++            path = parentPath.getAbsolutePath() + String.format("%1$s.local%1$sshare%1$sapktool%1$sframework", File.separatorChar);
+         }
+ 
+         File dir = new File(path);
+-- 
+2.14.1
+
