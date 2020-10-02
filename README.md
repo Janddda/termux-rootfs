@@ -55,7 +55,7 @@ File 'termux-rootfs-patch-inc-v${VERSION}.bin' is a binary patch file that shoul
 be downloaded from the [releases page](https://github.com/xeffyr/termux-rootfs/releases). Label '${VERSION}' should be replaced with
 next version, for example 3.3.
 
-__Warning:__ big updates that patch several thousands of files may require a lot of RAM (~1.5GB).
+__Warning:__ big updates that patch several thousands of files may require a lot of RAM (~2.0GB).
 
 ## Password login protection
 You can prevent using of termux by unwanted users by setting password with command '__passwd__' or '__termux-setup-rootfs__'.
